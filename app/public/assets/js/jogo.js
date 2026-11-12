@@ -384,7 +384,7 @@
       if (melhor) {
         const rot = melhor.estrela && !this.descobertas.has(melhor.estrela.c.id) ? '[E] conversar ✦' : melhor.rotulo;
         this.dica.setText(this.sys.game.device.input.touch ? rot.replace('[E] ', 'Toque: ') : rot)
-          .setPosition(melhor.x, melhor.y - 80).setVisible(true);
+          .setPosition(melhor.x, Math.min(melhor.y - 80, this.jogadora.y - 34)).setVisible(true);
       } else {
         this.dica.setVisible(false);
       }

@@ -470,13 +470,13 @@ label.check input { width: 20px; height: 20px; margin-top: 2px; flex: none; acce
 }
 @media (min-width: 760px) { .rodape { margin: 0 24px 24px; } }
 .rodape .gigante {
-  font: 900 clamp(4rem, 21vw, 19rem)/.8 var(--sans);
+  font: 900 clamp(4rem, 17.5vw, 16rem)/.8 var(--sans);
   font-stretch: 62%;
   text-transform: uppercase;
   letter-spacing: -.02em;
   margin: 0;
 }
-.rodape .gigante span { color: var(--amarelo); font-size: .45em; vertical-align: top; }
+.rodape .gigante span { color: var(--amarelo); font-size: .4em; vertical-align: .9em; margin-left: .04em; }
 .rodape p { margin: 0; font-family: var(--serif); font-style: italic; font-size: 1.15rem; max-width: 52ch; }
 
 /* ============================================================ Jogo */
