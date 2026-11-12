@@ -42,15 +42,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 cabecalho('Entrar');
 ?>
-<section class="cartao estreito">
-  <h1>Entrar</h1>
+<section class="estreito cabecalho-pagina">
+  <p class="kicker">Bem-vinda de volta</p>
+  <h1 class="titulo-secao">Entrar</h1>
   <?php if ($erro): ?><p class="erro"><?= e($erro) ?></p><?php endif; ?>
   <form method="post" action="/login.php">
     <?= csrf_campo() ?>
     <input type="hidden" name="voltar" value="<?= e($voltar) ?>">
     <label>E-mail <input type="email" name="email" required maxlength="190" autocomplete="username"></label>
     <label>Senha <input type="password" name="senha" required autocomplete="current-password"></label>
-    <button class="botao">Entrar</button>
+    <button class="botao glass glass--azul glass--interativo">Entrar</button>
   </form>
   <p>Não tem conta? <a href="/registrar.php">Cadastre-se</a>.</p>
 </section>

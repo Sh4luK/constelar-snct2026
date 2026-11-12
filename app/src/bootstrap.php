@@ -124,41 +124,70 @@ function texto_post(string $campo, int $max): string
     return mb_substr($v, 0, $max);
 }
 
-function cabecalho(string $titulo): void
+function links_nav(): array
 {
     $u = usuario_atual();
+    $links = [['/jogo.php', 'Jogar'], ['/cientistas.php', 'Cientistas'], ['/cadastro-cientista.php', 'Indicar']];
+    if ($u && $u['papel'] === 'admin') {
+        $links[] = ['/admin/', 'Painel'];
+    }
+    if (!$u) {
+        $links[] = ['/login.php', 'Entrar'];
+    }
+    return $links;
+}
+
+function render_links(string $atual): void
+{
+    foreach (links_nav() as [$href, $rotulo]) {
+        $ativo = rtrim($atual, '/') === rtrim(str_replace('index.php', '', $href), '/') || $atual === $href;
+        echo '<a href="' . e($href) . '"' . ($ativo ? ' aria-current="page"' : '') . '>' . e($rotulo) . '</a>';
+    }
+    if (usuario_atual()) {
+        echo '<form method="post" action="/logout.php">' . csrf_campo() . '<button>Sair</button></form>';
+    }
+}
+
+function cabecalho(string $titulo): void
+{
     $f = flash();
+    $atual = str_replace('index.php', '', (string) ($_SERVER['SCRIPT_NAME'] ?? '/'));
     ?><!doctype html>
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1a33ff">
 <title><?= e($titulo) ?> · Constelar</title>
+<link rel="preload" href="/assets/fonts/archivo-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/estilo.css">
+<script src="/assets/js/glass.js" defer></script>
 </head>
 <body>
+<div class="moldura">
 <header class="topo">
-  <a class="marca" href="/">✦ Constelar</a>
-  <nav>
-    <a href="/jogo.php">Jogar</a>
-    <a href="/cientistas.php">Cientistas</a>
-    <a href="/cadastro-cientista.php">Indicar cientista</a>
-    <?php if ($u && $u['papel'] === 'admin'): ?><a href="/admin/">Painel</a><?php endif; ?>
-    <?php if ($u): ?>
-      <form method="post" action="/logout.php" class="inline"><?= csrf_campo() ?><button class="link">Sair (<?= e($u['nome']) ?>)</button></form>
-    <?php else: ?>
-      <a href="/login.php">Entrar</a>
-    <?php endif; ?>
-  </nav>
+  <a class="marca glass glass--claro glass--interativo" href="/">Constelar</a>
+  <nav class="nav-pilula glass" aria-label="Principal"><?php render_links($atual); ?></nav>
+  <div class="topo-acoes">
+    <a class="botao-cta glass glass--azul glass--interativo" href="/jogo.php"><span class="ponto"></span>Explorar</a>
+    <details class="menu">
+      <summary class="glass glass--interativo">Menu</summary>
+      <nav class="menu-painel glass glass--claro" aria-label="Menu"><?php render_links($atual); ?></nav>
+    </details>
+  </div>
 </header>
 <main>
-<?php if ($f): ?><p class="aviso"><?= e($f) ?></p><?php endif;
+<?php if ($f): ?><p class="aviso" role="status"><?= e($f) ?></p><?php endif;
 }
 
 function rodape(): void
 {
     ?></main>
-<footer class="rodape">Constelar · SNCT 2026 · Em homenagem a Duília de Mello, a "Mulher das Estrelas".</footer>
+</div>
+<footer class="rodape">
+  <p class="gigante">Conste<em>lar</em></p>
+  <p>SNCT 2026 · Em homenagem a Duília de Mello, a "Mulher das Estrelas". Só exibimos cientistas que autorizaram o uso de seus dados (LGPD).</p>
+</footer>
 </body>
 </html>
 <?php

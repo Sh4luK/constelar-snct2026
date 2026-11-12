@@ -9,7 +9,10 @@ $lista = db()->query("SELECT c.nome, c.instituicao, c.biografia, a.nome AS area,
 
 cabecalho('Cientistas');
 ?>
-<h1>Cientistas no Constelar</h1>
+<header class="cabecalho-pagina">
+  <p class="kicker">Todas as estrelas</p>
+  <h1 class="titulo-secao">Cientistas no<br><em>Constelar</em></h1>
+</header>
 <div class="grade">
 <?php foreach ($lista as $c): ?>
   <article class="cartao cientista">

@@ -18,8 +18,11 @@ $contagem = db()->query('SELECT status, COUNT(*) n FROM cientistas GROUP BY stat
 
 cabecalho('Painel do administrador');
 ?>
-<h1>Painel do administrador</h1>
-<nav class="abas">
+<header class="cabecalho-pagina">
+  <p class="kicker">Administração</p>
+  <h1 class="titulo-secao">Painel de <em>revisão</em></h1>
+</header>
+<nav class="abas glass">
   <?php foreach (['pendente' => 'Pendentes', 'aprovado' => 'Aprovadas', 'rejeitado' => 'Rejeitadas'] as $k => $rotulo): ?>
     <a href="?status=<?= $k ?>" class="<?= $k === $filtro ? 'ativa' : '' ?>"><?= $rotulo ?> (<?= (int) ($contagem[$k] ?? 0) ?>)</a>
   <?php endforeach; ?>
@@ -40,9 +43,9 @@ cabecalho('Painel do administrador');
     <?= csrf_campo() ?>
     <input type="hidden" name="id" value="<?= (int) $c['id'] ?>">
     <input type="hidden" name="volta" value="<?= e($filtro) ?>">
-    <?php if ($filtro !== 'aprovado'): ?><button class="botao" name="acao" value="aprovar">Aprovar</button><?php endif; ?>
-    <?php if ($filtro !== 'rejeitado'): ?><button class="botao secundario" name="acao" value="rejeitar">Rejeitar</button><?php endif; ?>
-    <button class="botao perigo" name="acao" value="excluir" data-confirmar="Excluir definitivamente?">Excluir</button>
+    <?php if ($filtro !== 'aprovado'): ?><button class="botao glass glass--azul glass--interativo" name="acao" value="aprovar">Aprovar</button><?php endif; ?>
+    <?php if ($filtro !== 'rejeitado'): ?><button class="botao glass glass--interativo" name="acao" value="rejeitar">Rejeitar</button><?php endif; ?>
+    <button class="botao botao--perigo glass glass--interativo" name="acao" value="excluir" data-confirmar="Excluir definitivamente?">Excluir</button>
   </form>
 </article>
 <?php endforeach; ?>

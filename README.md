@@ -36,6 +36,12 @@ app/bin/             seed do administrador
 app/public/          páginas, API, admin, assets (jogo.js, phaser.min.js, CSS)
 ```
 
+## Visual
+
+- Moldura azul elétrica com página em "papel", tipografia display condensada (Archivo variável) misturada com serifa (Instrument Serif), adesivos rotacionados e mascote em SVG. Fontes servidas localmente (licença OFL em `app/public/assets/fonts/`).
+- Vidro em botões e menus: classe `.glass` (+ `--azul`, `--escuro`, `--claro`, `--interativo`) com `backdrop-filter`, reflexo que segue o ponteiro (`glass.js`) e resposta ao toque com efeito de mola. Sem suporte a `backdrop-filter` ou com `prefers-reduced-transparency`, vira fundo sólido. `expo-glass-effect` é exclusivo de React Native/iOS e não se aplica à web.
+- No jogo, HUD, diálogo, avisos e botão de voltar são HTML com vidro sobre o canvas (texto nítido em telas de alta densidade).
+
 ## Segurança aplicada
 
 PDO com prepared statements; `password_hash`; CSRF em todo POST; `session_regenerate_id` no login; limite de tentativas de login por IP; saída escapada (`htmlspecialchars`) e CSP sem scripts inline; redirecionamento só para caminhos locais.

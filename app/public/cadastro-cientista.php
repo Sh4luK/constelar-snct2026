@@ -37,8 +37,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 cabecalho('Indicar cientista');
 ?>
-<section class="cartao">
-  <h1>Indicar cientista</h1>
+<section class="formulario cabecalho-pagina">
+  <p class="kicker">Nova estrela</p>
+  <h1 class="titulo-secao">Indicar <em>cientista</em></h1>
   <?php foreach ($erros as $er): ?><p class="erro"><?= e($er) ?></p><?php endforeach; ?>
   <form method="post" action="/cadastro-cientista.php">
     <?= csrf_campo() ?>
@@ -57,7 +58,7 @@ cabecalho('Indicar cientista');
     <label>Fontes (sites, artigos, entrevistas) <input name="fonte" required maxlength="500" value="<?= e($d['fonte']) ?>"></label>
     <label class="check"><input type="checkbox" name="autorizacao" value="1" required>
       Declaro que a cientista autorizou o uso destas informações neste projeto, ou que se trata de pessoa falecida com dados públicos (LGPD, Lei nº 13.709/2018).</label>
-    <button class="botao">Enviar para revisão</button>
+    <button class="botao glass glass--azul glass--interativo">Enviar para revisão</button>
   </form>
 </section>
 <?php rodape();

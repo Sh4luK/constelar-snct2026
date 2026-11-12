@@ -39,15 +39,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 cabecalho('Criar conta');
 ?>
-<section class="cartao estreito">
-  <h1>Criar conta</h1>
+<section class="estreito cabecalho-pagina">
+  <p class="kicker">Participe</p>
+  <h1 class="titulo-secao">Criar <em>conta</em></h1>
   <?php foreach ($erros as $er): ?><p class="erro"><?= e($er) ?></p><?php endforeach; ?>
   <form method="post" action="/registrar.php">
     <?= csrf_campo() ?>
     <label>Nome <input name="nome" required maxlength="120" value="<?= e($nome) ?>" autocomplete="name"></label>
     <label>E-mail <input type="email" name="email" required maxlength="190" value="<?= e($email) ?>" autocomplete="email"></label>
     <label>Senha (mín. 8 caracteres) <input type="password" name="senha" required minlength="8" maxlength="72" autocomplete="new-password"></label>
-    <button class="botao">Criar conta</button>
+    <button class="botao glass glass--azul glass--interativo">Criar conta</button>
   </form>
   <p>Já tem conta? <a href="/login.php">Entrar</a>.</p>
 </section>

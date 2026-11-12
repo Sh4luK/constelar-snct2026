@@ -8,7 +8,7 @@
   const VELOCIDADE = 280;
   const CHAVE_STORAGE = 'constelar.descobertas.v1';
   const DPR = Math.min(window.devicePixelRatio || 1, 2);
-  const FONTE = 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
+  const FONTE = '"Archivo", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
 
   const corNum = (hex) => parseInt(String(hex).replace('#', ''), 16) || 0xffffff;
 
@@ -147,7 +147,7 @@
       this.ajustarZoom();
 
       this.dica = texto(this, 0, 0, '', {
-        fontSize: '14px', backgroundColor: '#0b1026dd', padding: { x: 10, y: 6 }, color: '#fcd34d',
+        fontSize: '14px', fontStyle: 'bold', backgroundColor: '#1a33ffee', padding: { x: 12, y: 7 }, color: '#ffffff',
       }).setOrigin(0.5, 1).setDepth(20).setVisible(false).setInteractive({ useHandCursor: true });
       this.dica.on('pointerdown', (p, x, y, ev) => { ev.stopPropagation(); this.interagir(); });
 
@@ -185,8 +185,8 @@
 
     criarObservatorio() {
       const g = this.add.graphics();
-      g.fillStyle(0x1b2559, 0.35).fillCircle(CENTRO.x, CENTRO.y, 260);
-      g.lineStyle(2, 0x2a3466, 1).strokeCircle(CENTRO.x, CENTRO.y, 260);
+      g.fillStyle(0x1a33ff, 0.22).fillCircle(CENTRO.x, CENTRO.y, 260);
+      g.lineStyle(2, 0x5a6dff, 0.9).strokeCircle(CENTRO.x, CENTRO.y, 260);
       g.lineStyle(1, 0x2a3466, 0.6).strokeCircle(CENTRO.x, CENTRO.y, 180);
       g.fillStyle(0x1e293b, 1).fillEllipse(CENTRO.x, CENTRO.y + 30, 150, 46);
 
@@ -391,59 +391,31 @@
     }
   }
 
-  /* ------------------------------------------------------------------ UI */
+  /* ------------------------------------------------------------------ UI
+   * Interface em HTML (vidro via CSS backdrop-filter) sobre o canvas: texto nítido em qualquer DPR.
+   * A cena Phaser só desenha as setas de direção nas bordas. */
+  const $ = (id) => document.getElementById(id);
+  const REDUZIR_MOV = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   class UI extends Phaser.Scene {
     constructor() { super('UI'); }
 
     create() {
       this.dialogoAberto = false;
-
-      this.hudTotal = texto(this, 0, 12, '', { fontSize: '16px', fontStyle: 'bold', color: '#fcd34d', backgroundColor: '#0b1026cc', padding: { x: 10, y: 6 } }).setOrigin(1, 0);
-      this.hudAreas = this.add.container(0, 50);
-
+      this.el = {
+        hudTotal: $('hud-total'), hudAreas: $('hud-areas'), ajuda: $('ajuda'), toast: $('toast'),
+        dlg: $('dialogo'), titulo: $('dlg-titulo'), sub: $('dlg-sub'), corpo: $('dlg-corpo'), pag: $('dlg-pag'), btn: $('dlg-btn'),
+      };
       const toque = this.sys.game.device.input.touch;
-      this.ajuda = texto(this, 0, 0, toque ? 'Toque na tela para mover · toque no aviso para conversar' : 'Setas / WASD ou clique para mover · E para conversar', {
-        fontSize: '14px', backgroundColor: '#0b1026dd', padding: { x: 12, y: 8 }, align: 'center',
-      }).setOrigin(0.5, 1);
+      this.el.ajuda.textContent = toque
+        ? 'Toque na tela para mover · toque no aviso para conversar'
+        : 'Setas / WASD ou clique para mover · E para conversar';
+      this.el.ajuda.hidden = false;
       this.time.delayedCall(12000, () => this.esconderAjuda());
 
-      this.caixa = this.add.container(0, 0).setVisible(false);
-      this.fundoCaixa = this.add.graphics();
-      this.zonaCaixa = this.add.zone(0, 0, 10, 10).setOrigin(0).setInteractive({ useHandCursor: true });
-      this.zonaCaixa.on('pointerdown', (p, x, y, ev) => { ev.stopPropagation(); this.avancar(); });
-      this.tTitulo = texto(this, 20, 16, '', { fontSize: '20px', fontStyle: 'bold' });
-      this.tSub = texto(this, 20, 44, '', { fontSize: '13px', color: '#a9b2d9' });
-      this.tCorpo = texto(this, 20, 74, '', { fontSize: '17px', lineSpacing: 6 });
-      this.tRodape = texto(this, 0, 0, '', { fontSize: '12px', color: '#a9b2d9' }).setOrigin(1, 1);
-      this.caixa.add([this.fundoCaixa, this.zonaCaixa, this.tTitulo, this.tSub, this.tCorpo, this.tRodape]);
-
-      this.aviso_ = texto(this, 0, 0, '', { fontSize: '18px', fontStyle: 'bold', backgroundColor: '#0b1026ee', padding: { x: 14, y: 10 } })
-        .setOrigin(0.5, 0).setAlpha(0);
-
-      this.scale.on('resize', this.posicionar, this);
-      this.events.once('shutdown', () => this.scale.off('resize', this.posicionar, this));
-      this.posicionar();
-    }
-
-    posicionar() {
-      const { width: w, height: h } = this.scale;
-      this.hudTotal.setPosition(w - 12, 12);
-      this.hudAreas.setPosition(w - 12, 52);
-      this.hudAreas.setVisible(w >= 640);
-      this.ajuda.setPosition(w / 2, h - 16).setWordWrapWidth(w - 32);
-      this.aviso_.setPosition(w / 2, 56);
-
-      const cw = Math.min(760, w - 24);
-      const ch = Math.min(230, Math.max(190, h * 0.32));
-      this.caixa.setPosition((w - cw) / 2, h - ch - 12);
-      this.fundoCaixa.clear()
-        .fillStyle(0x0b1026, 0.95).fillRoundedRect(0, 0, cw, ch, 14)
-        .lineStyle(2, corNum(this.corAtual || '#2a3466'), 1).strokeRoundedRect(0, 0, cw, ch, 14);
-      this.zonaCaixa.setSize(cw, ch);
-      this.zonaCaixa.input.hitArea.setSize(cw, ch);
-      this.tCorpo.setWordWrapWidth(cw - 40, true);
-      this.tRodape.setPosition(cw - 16, ch - 12);
-      this.caixaW = cw;
+      const avancar = (ev) => { ev.preventDefault(); ev.stopPropagation(); this.avancar(); };
+      this.el.dlg.addEventListener('click', avancar);
+      this.events.once('shutdown', () => this.el.dlg.removeEventListener('click', avancar));
     }
 
     atualizarBussola(alvos) {
@@ -453,8 +425,8 @@
       alvos.forEach((a, i) => {
         let s = this.setas[i];
         if (!s) {
-          s = this.setas[i] = this.add.triangle(0, 0, 0, -11, 18, 0, 0, 11, corNum(a.cor)).setAlpha(0.85);
-          this.tweens.add({ targets: s, alpha: 0.4, duration: 900, yoyo: true, repeat: -1 });
+          s = this.setas[i] = this.add.triangle(0, 0, 0, -11, 18, 0, 0, 11, corNum(a.cor)).setAlpha(0.9).setStrokeStyle(2, 0xffffff, 0.9);
+          if (!REDUZIR_MOV) this.tweens.add({ targets: s, alpha: 0.45, duration: 900, yoyo: true, repeat: -1 });
         }
         s.setVisible(a.visivel && !this.dialogoAberto);
         if (!a.visivel) return;
@@ -465,38 +437,36 @@
     }
 
     atualizarHud(acesas, total, areas) {
-      this.hudTotal.setText(`✦ ${acesas}/${total} estrelas`);
-      this.hudAreas.removeAll(true);
-      areas.forEach((a, i) => {
-        const feita = a.total > 0 && a.acesas === a.total;
-        this.hudAreas.add(texto(this, 0, i * 20, `${feita ? '✦ ' : ''}${a.nome} ${a.acesas}/${a.total}`, {
-          fontSize: '13px', color: feita ? a.cor : '#a9b2d9', backgroundColor: '#0b1026aa', padding: { x: 6, y: 2 },
-        }).setOrigin(1, 0));
-      });
+      this.el.hudTotal.textContent = `✦ ${acesas}/${total} estrelas`;
+      this.el.hudAreas.replaceChildren(...areas.map((a) => {
+        const li = document.createElement('li');
+        const bola = document.createElement('span');
+        bola.className = 'bolinha';
+        bola.style.setProperty('--cor', a.cor);
+        li.append(bola, `${a.nome} ${a.acesas}/${a.total}`);
+        if (a.total > 0 && a.acesas === a.total) li.className = 'feita';
+        return li;
+      }));
     }
 
-    esconderAjuda() {
-      if (this.ajuda.visible && !this.ajudaSumindo) {
-        this.ajudaSumindo = true;
-        this.tweens.add({ targets: this.ajuda, alpha: 0, duration: 600, onComplete: () => this.ajuda.setVisible(false) });
-      }
-    }
+    esconderAjuda() { this.el.ajuda.classList.add('oculta'); }
 
-    aviso(msg, cor) {
-      this.tweens.killTweensOf(this.aviso_);
-      this.aviso_.setText(msg).setColor(cor || '#fcd34d').setAlpha(1);
-      this.tweens.add({ targets: this.aviso_, alpha: 0, delay: 2600, duration: 700 });
+    aviso(msg) {
+      const t = this.el.toast;
+      t.textContent = msg;
+      t.classList.add('visivel');
+      clearTimeout(this.timerAviso);
+      this.timerAviso = setTimeout(() => t.classList.remove('visivel'), 3000);
     }
 
     abrirDialogo(d, aoFechar) {
       this.dialogo = d;
       this.aoFechar = aoFechar;
       this.pagina = 0;
-      this.corAtual = d.cor;
-      this.posicionar();
-      this.tTitulo.setText(d.titulo).setColor(d.cor || '#e8ecff');
-      this.tSub.setText(d.subtitulo || '');
-      this.caixa.setVisible(true);
+      this.el.titulo.textContent = d.titulo;
+      this.el.titulo.style.setProperty('--cor', d.cor || '#fff');
+      this.el.sub.textContent = d.subtitulo || '';
+      this.el.dlg.hidden = false;
       this.dialogoAberto = true;
       (this.setas || []).forEach((x) => x.setVisible(false));
       this.mostrarPagina();
@@ -505,14 +475,17 @@
     mostrarPagina() {
       const txt = this.dialogo.paginas[this.pagina];
       const ultima = this.pagina === this.dialogo.paginas.length - 1;
-      this.tRodape.setText(`${this.pagina + 1}/${this.dialogo.paginas.length}  ${ultima ? '■ fechar' : '▶ continuar'} (E / toque)`);
-      this.tCorpo.setText('');
+      this.el.pag.textContent = `${this.pagina + 1}/${this.dialogo.paginas.length}`;
+      this.el.btn.textContent = ultima ? 'Fechar ✕' : 'Continuar →';
       this.digitando?.remove();
-      let i = 0;
+      this.digitando = null;
       this.textoCheio = txt;
+      if (REDUZIR_MOV) { this.el.corpo.textContent = txt; return; }
+      let i = 0;
+      this.el.corpo.textContent = '';
       this.digitando = this.time.addEvent({
-        delay: 18, repeat: txt.length - 1,
-        callback: () => { i++; this.tCorpo.setText(txt.slice(0, i)); },
+        delay: 16, repeat: txt.length - 1,
+        callback: () => { i++; this.el.corpo.textContent = txt.slice(0, i); },
       });
     }
 
@@ -521,14 +494,14 @@
       if (this.digitando && this.digitando.getOverallProgress() < 1) {
         this.digitando.remove();
         this.digitando = null;
-        this.tCorpo.setText(this.textoCheio);
+        this.el.corpo.textContent = this.textoCheio;
         return;
       }
       if (++this.pagina < this.dialogo.paginas.length) {
         this.mostrarPagina();
         return;
       }
-      this.caixa.setVisible(false);
+      this.el.dlg.hidden = true;
       this.dialogoAberto = false;
       const cb = this.aoFechar;
       this.aoFechar = null;
@@ -536,7 +509,7 @@
     }
   }
 
-  new Phaser.Game({
+  const iniciar = () => new Phaser.Game({
     type: Phaser.AUTO,
     parent: 'jogo',
     backgroundColor: '#050816',
@@ -544,4 +517,10 @@
     physics: { default: 'arcade', arcade: { debug: false } },
     scene: [Boot, Mundo, UI],
   });
+
+  // Canvas não espera webfont: carrega a Archivo antes de desenhar textos (máx. 1,5 s).
+  Promise.race([
+    document.fonts ? document.fonts.load('700 16px "Archivo"') : Promise.resolve(),
+    new Promise((r) => setTimeout(r, 1500)),
+  ]).catch(() => {}).then(iniciar);
 })();
