@@ -8,51 +8,47 @@ $areas = db()->query('SELECT nome, cor FROM areas ORDER BY id')->fetchAll();
 cabecalho('Início');
 ?>
 <section class="hero">
-  <svg class="ceu-hero" viewBox="0 0 1200 640" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-    <g class="tracos">
-      <path d="M80 140L210 70L330 180L190 300L80 140"/>
-      <path d="M880 90L1030 150L1130 70M1030 150L980 290L1120 360"/>
-      <path d="M110 520L290 590L420 500"/>
-      <path d="M820 560L960 500L1100 580"/>
-    </g>
-    <g class="nos">
-      <circle cx="80" cy="140" r="5" fill="#ffd23f"/><circle cx="210" cy="70" r="7" fill="#b294ff"/>
-      <circle cx="330" cy="180" r="4" fill="#ff7ac8"/><circle cx="190" cy="300" r="6" fill="#3ddc97"/>
-      <circle cx="880" cy="90" r="5" fill="#ff7ac8"/><circle cx="1030" cy="150" r="7" fill="#ffd23f"/>
-      <circle cx="1130" cy="70" r="4" fill="#b294ff"/><circle cx="980" cy="290" r="5" fill="#3ddc97"/>
-      <circle cx="1120" cy="360" r="6" fill="#7b3fe4"/><circle cx="110" cy="520" r="6" fill="#7b3fe4"/>
-      <circle cx="290" cy="590" r="4" fill="#ffd23f"/><circle cx="420" cy="500" r="5" fill="#ff7ac8"/>
-      <circle cx="820" cy="560" r="5" fill="#b294ff"/><circle cx="960" cy="500" r="7" fill="#3ddc97"/>
-      <circle cx="1100" cy="580" r="4" fill="#ffd23f"/>
+  <svg class="ceu-hero" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <path d="M70 120L190 70L280 160L170 250ZM940 80L1060 140L1140 60M1060 140L1010 260L1130 320M90 480L230 540L330 470M880 520L990 470L1110 540"/>
+    <g>
+      <path d="M190 58l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/><path d="M1060 128l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/>
+      <path d="M1010 248l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/><path d="M230 528l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/>
+      <path d="M990 458l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/>
     </g>
   </svg>
 
-  <svg class="mascote" viewBox="0 0 120 130" aria-hidden="true">
-    <path d="M60 6l15 32 35 5-25 24 6 35-31-17-31 17 6-35L10 43l35-5z" fill="#ffd23f" stroke="#7b3fe4" stroke-width="5" stroke-linejoin="round"/>
-    <ellipse cx="49" cy="58" rx="7" ry="9" fill="#fff"/><ellipse cx="71" cy="58" rx="7" ry="9" fill="#fff"/>
-    <circle cx="51" cy="60" r="3.5" fill="#1c0b45"/><circle cx="73" cy="60" r="3.5" fill="#1c0b45"/>
-    <path d="M52 76q8 7 16 0" stroke="#1c0b45" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <span class="adesivo adesivo--vermelho ad1" aria-hidden="true">Ciência é<br>pra elas!</span>
+  <span class="adesivo adesivo--amarelo ad2" aria-hidden="true">SNCT ★ 2026</span>
+  <svg class="estouro" viewBox="0 0 120 120" aria-hidden="true">
+    <polygon points="60.0,0.0 70.5,14.2 86.0,5.9 89.3,23.3 106.9,22.6 102.3,39.6 118.5,46.6 107.0,60.0 118.5,73.4 102.3,80.4 106.9,97.4 89.3,96.7 86.0,114.1 70.5,105.8 60.0,120.0 49.5,105.8 34.0,114.1 30.7,96.7 13.1,97.4 17.7,80.4 1.5,73.4 13.0,60.0 1.5,46.6 17.7,39.6 13.1,22.6 30.7,23.3 34.0,5.9 49.5,14.2"/>
+    <text x="60" y="56" text-anchor="middle">100%</text>
+    <text x="60" y="74" text-anchor="middle">BRASILEIRAS</text>
+  </svg>
+  <svg class="mascote" viewBox="0 0 120 120" aria-hidden="true">
+    <path d="M60 6l15 32 35 5-25 24 6 35-31-17-31 17 6-35L10 43l35-5z" fill="#ffd23f" stroke="#141414" stroke-width="4" stroke-linejoin="round"/>
+    <ellipse cx="49" cy="58" rx="7" ry="9" fill="#fff" stroke="#141414" stroke-width="2"/><ellipse cx="71" cy="58" rx="7" ry="9" fill="#fff" stroke="#141414" stroke-width="2"/>
+    <circle cx="51" cy="60" r="3.5" fill="#141414"/><circle cx="73" cy="60" r="3.5" fill="#141414"/>
+    <path d="M52 76q8 7 16 0" stroke="#141414" stroke-width="3.5" fill="none" stroke-linecap="round"/>
   </svg>
 
-  <p class="selo-topo glass glass--claro">✦ SNCT 2026 · mulheres na ciência</p>
+  <p class="hero-sub">Mulheres cientistas brasileiras<br>num observatório para explorar</p>
   <h1 class="mega">
     <span class="linha">Cada cientista</span>
-    <span class="linha">é uma <span class="contorno">estrela</span></span>
+    <span class="linha">é uma <em>estrela</em></span>
   </h1>
-  <p class="hero-sub">Explore um observatório virtual, converse com cientistas brasileiras e acenda as constelações de cada área do conhecimento.</p>
 
   <div class="hero-acoes">
-    <a class="botao glass glass--roxo glass--interativo" href="/jogo.php">Começar a explorar →</a>
-    <a class="botao glass glass--interativo" href="/cientistas.php">Ver cientistas</a>
+    <a class="botao glass glass--tinta glass--interativo" href="/jogo.php">Começar a explorar →</a>
+    <a class="botao glass glass--claro glass--interativo" href="/cientistas.php">Ver cientistas</a>
   </div>
 
-  <ul class="chips" aria-label="Áreas do conhecimento">
+  <ul class="faixa" aria-label="Áreas do conhecimento">
     <?php foreach ($areas as $a): ?>
-      <li class="glass glass--claro"><svg viewBox="0 0 10 10" width="10" height="10" aria-hidden="true"><circle cx="5" cy="5" r="5" fill="<?= e($a['cor']) ?>"/></svg><?= e($a['nome']) ?></li>
+      <li><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path fill="<?= e($a['cor']) ?>" stroke="#141414" stroke-width="2" stroke-linejoin="round" d="M12 2l2.9 6.9L22 10l-5.5 4.7L18.2 22 12 18.3 5.8 22l1.7-7.3L2 10l7.1-1.1z"/></svg><?= e($a['nome']) ?></li>
     <?php endforeach; ?>
   </ul>
-  <p class="numeros"><strong><?= $total ?></strong> estrelas · <strong><?= count($areas) ?></strong> constelações</p>
 </section>
+<p class="numeros"><strong><?= $total ?></strong> estrelas acesas em <strong><?= count($areas) ?></strong> constelações</p>
 
 <section class="secao" id="como">
   <p class="kicker">Como funciona</p>
@@ -64,11 +60,12 @@ cabecalho('Início');
   </div>
 </section>
 
-<section class="bloco-roxo">
-  <div class="estrelas-fundo" aria-hidden="true"></div>
+<section class="bloco-tinta">
+  <span class="adesivo adesivo--rosa ad-sn" aria-hidden="true">★ SN 1997D</span>
   <p class="kicker">Homenageada</p>
-  <p class="citacao">Duília de Mello, a “Mulher das Estrelas”.</p>
+  <p class="citacao">Duília de Mello, a <em>“Mulher das Estrelas”</em>.</p>
   <p>Astrônoma brasileira que descobriu a supernova SN 1997D, colabora com a NASA e atua na divulgação científica para incentivar crianças e jovens a seguir carreira em ciência.</p>
+  <svg class="estrela-grande" viewBox="0 0 120 120" aria-hidden="true"><path d="M60 4l15 33 36 5-26 25 6 36-31-17-31 17 6-36L9 42l36-5z"/></svg>
 </section>
 
 <section class="secao">

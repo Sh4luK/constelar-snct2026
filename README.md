@@ -38,8 +38,8 @@ app/public/          páginas, API, admin, assets (jogo.js, phaser.min.js, CSS)
 
 ## Visual
 
-- Paleta roxa (`--roxo #7b3fe4`, `--roxo-noite #1c0b45`) sobre fundo lavanda; tipografia larga (Archivo variável, `font-stretch` ~118%) com destaques em serifa itálica (Instrument Serif). Herói com constelação desenhada em SVG e mascote estrela. Fontes servidas localmente (OFL em `app/public/assets/fonts/`).
-- Vidro em botões e menus: classe `.glass` (+ `--roxo`, `--escuro`, `--claro`, `--interativo`) com `backdrop-filter`, reflexo que segue o ponteiro (`glass.js`) e resposta ao toque com efeito de mola. Sem suporte a `backdrop-filter` ou com `prefers-reduced-transparency`, vira fundo sólido. `expo-glass-effect` é exclusivo de React Native/iOS e não se aplica à web.
+- Cores chapadas, sem degradê: roxo `#6a2cff`, papel `#f2efe7`, tinta `#141414`, amarelo, vermelho, rosa e laranja de apoio. Títulos em Archivo condensada pesada com destaques em Instrument Serif itálica, adesivos com contorno em tinta, selo-estouro, mascote estrela e cartões com borda de 2px. Fontes servidas localmente (OFL em `app/public/assets/fonts/`).
+- Vidro em botões e menus: classe `.glass` (+ `--claro`, `--tinta`, `--roxo`, `--escuro`, `--interativo`) com `backdrop-filter` e fio de luz; reflexo leve segue o ponteiro (`glass.js`). Sem suporte a `backdrop-filter` ou com `prefers-reduced-transparency`, vira fundo sólido. `expo-glass-effect` é exclusivo de React Native/iOS e não se aplica à web.
 - No jogo, HUD, diálogo, avisos e botão de voltar são HTML com vidro sobre o canvas.
 
 ## Segurança aplicada

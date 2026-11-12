@@ -147,7 +147,7 @@
       this.ajustarZoom();
 
       this.dica = texto(this, 0, 0, '', {
-        fontSize: '14px', fontStyle: 'bold', backgroundColor: '#7b3fe4ee', padding: { x: 12, y: 7 }, color: '#ffffff',
+        fontSize: '14px', fontStyle: 'bold', backgroundColor: '#6a2cffee', padding: { x: 12, y: 7 }, color: '#ffffff',
       }).setOrigin(0.5, 1).setDepth(20).setVisible(false).setInteractive({ useHandCursor: true });
       this.dica.on('pointerdown', (p, x, y, ev) => { ev.stopPropagation(); this.interagir(); });
 
@@ -185,7 +185,7 @@
 
     criarObservatorio() {
       const g = this.add.graphics();
-      g.fillStyle(0x7b3fe4, 0.22).fillCircle(CENTRO.x, CENTRO.y, 260);
+      g.fillStyle(0x6a2cff, 0.22).fillCircle(CENTRO.x, CENTRO.y, 260);
       g.lineStyle(2, 0xb294ff, 0.9).strokeCircle(CENTRO.x, CENTRO.y, 260);
       g.lineStyle(1, 0x2a3466, 0.6).strokeCircle(CENTRO.x, CENTRO.y, 180);
       g.fillStyle(0x1e293b, 1).fillEllipse(CENTRO.x, CENTRO.y + 30, 150, 46);

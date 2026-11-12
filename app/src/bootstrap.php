@@ -157,7 +157,7 @@ function cabecalho(string $titulo): void
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#f4f0fc">
+<meta name="theme-color" content="#f2efe7">
 <title><?= e($titulo) ?> · Constelar</title>
 <link rel="preload" href="/assets/fonts/archivo-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/estilo.css">
