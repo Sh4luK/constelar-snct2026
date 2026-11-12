@@ -48,7 +48,7 @@ cabecalho('Criar conta');
     <label>Nome <input name="nome" required maxlength="120" value="<?= e($nome) ?>" autocomplete="name"></label>
     <label>E-mail <input type="email" name="email" required maxlength="190" value="<?= e($email) ?>" autocomplete="email"></label>
     <label>Senha (mín. 8 caracteres) <input type="password" name="senha" required minlength="8" maxlength="72" autocomplete="new-password"></label>
-    <button class="botao glass glass--azul glass--interativo">Criar conta</button>
+    <button class="botao glass glass--roxo glass--interativo">Criar conta</button>
   </form>
   <p>Já tem conta? <a href="/login.php">Entrar</a>.</p>
 </section>

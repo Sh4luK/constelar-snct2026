@@ -58,7 +58,7 @@ cabecalho('Indicar cientista');
     <label>Fontes (sites, artigos, entrevistas) <input name="fonte" required maxlength="500" value="<?= e($d['fonte']) ?>"></label>
     <label class="check"><input type="checkbox" name="autorizacao" value="1" required>
       Declaro que a cientista autorizou o uso destas informações neste projeto, ou que se trata de pessoa falecida com dados públicos (LGPD, Lei nº 13.709/2018).</label>
-    <button class="botao glass glass--azul glass--interativo">Enviar para revisão</button>
+    <button class="botao glass glass--roxo glass--interativo">Enviar para revisão</button>
   </form>
 </section>
 <?php rodape();

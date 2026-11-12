@@ -131,7 +131,7 @@
 
     create() {
       this.physics.world.setBounds(0, 0, MUNDO.w, MUNDO.h);
-      this.cameras.main.setBounds(0, 0, MUNDO.w, MUNDO.h).setBackgroundColor('#050816');
+      this.cameras.main.setBounds(0, 0, MUNDO.w, MUNDO.h).setBackgroundColor('#0e0722');
 
       this.ceu = this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'ceu').setOrigin(0).setScrollFactor(0);
       this.ceu2 = this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'ceu').setOrigin(0).setScrollFactor(0).setAlpha(0.5).setTileScale(0.6);
@@ -147,7 +147,7 @@
       this.ajustarZoom();
 
       this.dica = texto(this, 0, 0, '', {
-        fontSize: '14px', fontStyle: 'bold', backgroundColor: '#1a33ffee', padding: { x: 12, y: 7 }, color: '#ffffff',
+        fontSize: '14px', fontStyle: 'bold', backgroundColor: '#7b3fe4ee', padding: { x: 12, y: 7 }, color: '#ffffff',
       }).setOrigin(0.5, 1).setDepth(20).setVisible(false).setInteractive({ useHandCursor: true });
       this.dica.on('pointerdown', (p, x, y, ev) => { ev.stopPropagation(); this.interagir(); });
 
@@ -185,8 +185,8 @@
 
     criarObservatorio() {
       const g = this.add.graphics();
-      g.fillStyle(0x1a33ff, 0.22).fillCircle(CENTRO.x, CENTRO.y, 260);
-      g.lineStyle(2, 0x5a6dff, 0.9).strokeCircle(CENTRO.x, CENTRO.y, 260);
+      g.fillStyle(0x7b3fe4, 0.22).fillCircle(CENTRO.x, CENTRO.y, 260);
+      g.lineStyle(2, 0xb294ff, 0.9).strokeCircle(CENTRO.x, CENTRO.y, 260);
       g.lineStyle(1, 0x2a3466, 0.6).strokeCircle(CENTRO.x, CENTRO.y, 180);
       g.fillStyle(0x1e293b, 1).fillEllipse(CENTRO.x, CENTRO.y + 30, 150, 46);
 
@@ -512,7 +512,7 @@
   const iniciar = () => new Phaser.Game({
     type: Phaser.AUTO,
     parent: 'jogo',
-    backgroundColor: '#050816',
+    backgroundColor: '#0e0722',
     scale: { mode: Phaser.Scale.RESIZE, width: window.innerWidth, height: window.innerHeight },
     physics: { default: 'arcade', arcade: { debug: false } },
     scene: [Boot, Mundo, UI],

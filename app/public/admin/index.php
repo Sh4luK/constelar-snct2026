@@ -43,7 +43,7 @@ cabecalho('Painel do administrador');
     <?= csrf_campo() ?>
     <input type="hidden" name="id" value="<?= (int) $c['id'] ?>">
     <input type="hidden" name="volta" value="<?= e($filtro) ?>">
-    <?php if ($filtro !== 'aprovado'): ?><button class="botao glass glass--azul glass--interativo" name="acao" value="aprovar">Aprovar</button><?php endif; ?>
+    <?php if ($filtro !== 'aprovado'): ?><button class="botao glass glass--roxo glass--interativo" name="acao" value="aprovar">Aprovar</button><?php endif; ?>
     <?php if ($filtro !== 'rejeitado'): ?><button class="botao glass glass--interativo" name="acao" value="rejeitar">Rejeitar</button><?php endif; ?>
     <button class="botao botao--perigo glass glass--interativo" name="acao" value="excluir" data-confirmar="Excluir definitivamente?">Excluir</button>
   </form>

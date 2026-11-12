@@ -157,7 +157,7 @@ function cabecalho(string $titulo): void
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#1a33ff">
+<meta name="theme-color" content="#f4f0fc">
 <title><?= e($titulo) ?> · Constelar</title>
 <link rel="preload" href="/assets/fonts/archivo-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/estilo.css">
@@ -166,10 +166,10 @@ function cabecalho(string $titulo): void
 <body>
 <div class="moldura">
 <header class="topo">
-  <a class="marca glass glass--claro glass--interativo" href="/">Constelar</a>
+  <a class="marca glass glass--claro glass--interativo" href="/"><span aria-hidden="true">✦</span> constelar</a>
   <nav class="nav-pilula glass" aria-label="Principal"><?php render_links($atual); ?></nav>
   <div class="topo-acoes">
-    <a class="botao-cta glass glass--azul glass--interativo" href="/jogo.php"><span class="ponto"></span>Explorar</a>
+    <a class="botao-cta glass glass--roxo glass--interativo" href="/jogo.php"><span class="ponto"></span>Explorar</a>
     <details class="menu">
       <summary class="glass glass--interativo">Menu</summary>
       <nav class="menu-painel glass glass--claro" aria-label="Menu"><?php render_links($atual); ?></nav>
@@ -185,7 +185,7 @@ function rodape(): void
     ?></main>
 </div>
 <footer class="rodape">
-  <p class="gigante">Conste<em>lar</em></p>
+  <p class="gigante">constelar<span aria-hidden="true">✦</span></p>
   <p>SNCT 2026 · Em homenagem a Duília de Mello, a "Mulher das Estrelas". Só exibimos cientistas que autorizaram o uso de seus dados (LGPD).</p>
 </footer>
 </body>

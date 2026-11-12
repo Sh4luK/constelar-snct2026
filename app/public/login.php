@@ -51,7 +51,7 @@ cabecalho('Entrar');
     <input type="hidden" name="voltar" value="<?= e($voltar) ?>">
     <label>E-mail <input type="email" name="email" required maxlength="190" autocomplete="username"></label>
     <label>Senha <input type="password" name="senha" required autocomplete="current-password"></label>
-    <button class="botao glass glass--azul glass--interativo">Entrar</button>
+    <button class="botao glass glass--roxo glass--interativo">Entrar</button>
   </form>
   <p>Não tem conta? <a href="/registrar.php">Cadastre-se</a>.</p>
 </section>

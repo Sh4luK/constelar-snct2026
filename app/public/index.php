@@ -8,47 +8,50 @@ $areas = db()->query('SELECT nome, cor FROM areas ORDER BY id')->fetchAll();
 cabecalho('Início');
 ?>
 <section class="hero">
-  <div class="hero-fundo" aria-hidden="true"></div>
-
-  <span class="adesivo adesivo--vermelho a1" aria-hidden="true">Ciência é<br>pra elas!</span>
-  <span class="adesivo adesivo--rosa a2" aria-hidden="true">★ Mulher das<br>estrelas</span>
-  <span class="adesivo adesivo--verde a3" aria-hidden="true">SNCT<br>2026</span>
-
-  <svg class="adesivo-svg mascote" viewBox="0 0 120 130" aria-hidden="true">
-    <path d="M60 6l15 32 35 5-25 24 6 35-31-17-31 17 6-35L10 43l35-5z" fill="#ff7a1a" stroke="#fff" stroke-width="6" stroke-linejoin="round"/>
-    <ellipse cx="49" cy="58" rx="8" ry="10" fill="#fff"/><ellipse cx="71" cy="58" rx="8" ry="10" fill="#fff"/>
-    <circle cx="51" cy="60" r="4" fill="#111"/><circle cx="73" cy="60" r="4" fill="#111"/>
-    <path d="M52 76q8 7 16 0" stroke="#111" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-    <path d="M42 100l-8 22h-10M78 100l8 22h10" stroke="#ff7a1a" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <svg class="ceu-hero" viewBox="0 0 1200 640" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <g class="tracos">
+      <path d="M80 140L210 70L330 180L190 300L80 140"/>
+      <path d="M880 90L1030 150L1130 70M1030 150L980 290L1120 360"/>
+      <path d="M110 520L290 590L420 500"/>
+      <path d="M820 560L960 500L1100 580"/>
+    </g>
+    <g class="nos">
+      <circle cx="80" cy="140" r="5" fill="#ffd23f"/><circle cx="210" cy="70" r="7" fill="#b294ff"/>
+      <circle cx="330" cy="180" r="4" fill="#ff7ac8"/><circle cx="190" cy="300" r="6" fill="#3ddc97"/>
+      <circle cx="880" cy="90" r="5" fill="#ff7ac8"/><circle cx="1030" cy="150" r="7" fill="#ffd23f"/>
+      <circle cx="1130" cy="70" r="4" fill="#b294ff"/><circle cx="980" cy="290" r="5" fill="#3ddc97"/>
+      <circle cx="1120" cy="360" r="6" fill="#7b3fe4"/><circle cx="110" cy="520" r="6" fill="#7b3fe4"/>
+      <circle cx="290" cy="590" r="4" fill="#ffd23f"/><circle cx="420" cy="500" r="5" fill="#ff7ac8"/>
+      <circle cx="820" cy="560" r="5" fill="#b294ff"/><circle cx="960" cy="500" r="7" fill="#3ddc97"/>
+      <circle cx="1100" cy="580" r="4" fill="#ffd23f"/>
+    </g>
   </svg>
 
-  <svg class="adesivo-svg selo" viewBox="0 0 140 140" aria-hidden="true">
-    <defs><path id="circulo" d="M70 70m-48 0a48 48 0 1 1 96 0a48 48 0 1 1-96 0"/></defs>
-    <circle cx="70" cy="70" r="66" fill="#a9b6ff" stroke="#fff" stroke-width="5"/>
-    <text font-family="Archivo, sans-serif" font-weight="900" font-size="14" fill="#111">
-      <textPath href="#circulo" textLength="298" lengthAdjust="spacing">EXPLORE • DESCUBRA • CONSTELE •</textPath>
-    </text>
-    <path d="M70 52l5 11 12 2-9 8 2 12-10-6-10 6 2-12-9-8 12-2z" fill="#1a33ff"/>
+  <svg class="mascote" viewBox="0 0 120 130" aria-hidden="true">
+    <path d="M60 6l15 32 35 5-25 24 6 35-31-17-31 17 6-35L10 43l35-5z" fill="#ffd23f" stroke="#7b3fe4" stroke-width="5" stroke-linejoin="round"/>
+    <ellipse cx="49" cy="58" rx="7" ry="9" fill="#fff"/><ellipse cx="71" cy="58" rx="7" ry="9" fill="#fff"/>
+    <circle cx="51" cy="60" r="3.5" fill="#1c0b45"/><circle cx="73" cy="60" r="3.5" fill="#1c0b45"/>
+    <path d="M52 76q8 7 16 0" stroke="#1c0b45" stroke-width="3.5" fill="none" stroke-linecap="round"/>
   </svg>
 
-  <p class="hero-sub">Mulheres cientistas,<br>estrelas &amp; constelações</p>
+  <p class="selo-topo glass glass--claro">✦ SNCT 2026 · mulheres na ciência</p>
   <h1 class="mega">
     <span class="linha">Cada cientista</span>
-    <span class="linha">é uma <span class="serifa">estrela</span></span>
+    <span class="linha">é uma <span class="contorno">estrela</span></span>
   </h1>
-  <a class="ancora" href="#como">Descubra como <span class="seta">↓</span></a>
+  <p class="hero-sub">Explore um observatório virtual, converse com cientistas brasileiras e acenda as constelações de cada área do conhecimento.</p>
 
   <div class="hero-acoes">
-    <a class="botao glass glass--azul glass--interativo" href="/jogo.php">Começar a explorar →</a>
+    <a class="botao glass glass--roxo glass--interativo" href="/jogo.php">Começar a explorar →</a>
     <a class="botao glass glass--interativo" href="/cientistas.php">Ver cientistas</a>
   </div>
-  <p class="numeros"><strong><?= $total ?></strong> estrelas · <strong><?= count($areas) ?></strong> constelações</p>
 
-  <ul class="faixa" aria-label="Áreas do conhecimento">
+  <ul class="chips" aria-label="Áreas do conhecimento">
     <?php foreach ($areas as $a): ?>
-      <li><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="<?= e($a['cor']) ?>" stroke="#111" stroke-width="1.5" d="M12 2l2.9 6.9L22 10l-5.5 4.7L18.2 22 12 18.3 5.8 22l1.7-7.3L2 10l7.1-1.1z"/></svg><?= e($a['nome']) ?></li>
+      <li class="glass glass--claro"><svg viewBox="0 0 10 10" width="10" height="10" aria-hidden="true"><circle cx="5" cy="5" r="5" fill="<?= e($a['cor']) ?>"/></svg><?= e($a['nome']) ?></li>
     <?php endforeach; ?>
   </ul>
+  <p class="numeros"><strong><?= $total ?></strong> estrelas · <strong><?= count($areas) ?></strong> constelações</p>
 </section>
 
 <section class="secao" id="como">
@@ -61,7 +64,7 @@ cabecalho('Início');
   </div>
 </section>
 
-<section class="bloco-azul">
+<section class="bloco-roxo">
   <div class="estrelas-fundo" aria-hidden="true"></div>
   <p class="kicker">Homenageada</p>
   <p class="citacao">Duília de Mello, a “Mulher das Estrelas”.</p>
@@ -73,7 +76,7 @@ cabecalho('Início');
   <h2 class="titulo-secao">Conhece uma cientista<br><em>que deveria estar aqui?</em></h2>
   <p>Crie uma conta e indique. Toda indicação passa pela revisão da administração, e só são publicadas cientistas que autorizaram o uso de seus dados (LGPD).</p>
   <div class="hero-acoes hero-acoes--esq">
-    <a class="botao glass glass--azul glass--interativo" href="/cadastro-cientista.php">Indicar cientista</a>
+    <a class="botao glass glass--roxo glass--interativo" href="/cadastro-cientista.php">Indicar cientista</a>
   </div>
 </section>
 <?php rodape();

@@ -6,7 +6,7 @@ require __DIR__ . '/../src/bootstrap.php';
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<meta name="theme-color" content="#050816">
+<meta name="theme-color" content="#0e0722">
 <title>Observatório · Constelar</title>
 <link rel="preload" href="/assets/fonts/archivo-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/estilo.css">
@@ -14,7 +14,7 @@ require __DIR__ . '/../src/bootstrap.php';
 <body class="tela-jogo">
 <div id="jogo"></div>
 
-<a class="jogo-ui jogo-voltar glass glass--escuro glass--interativo" href="/">← Constelar</a>
+<a class="jogo-ui jogo-voltar glass glass--escuro glass--interativo" href="/">← constelar</a>
 <div class="jogo-ui hud glass glass--escuro" aria-live="polite">
   <strong id="hud-total">✦ 0 estrelas</strong>
   <ul id="hud-areas"></ul>
@@ -27,7 +27,7 @@ require __DIR__ . '/../src/bootstrap.php';
   <p class="dlg-corpo" id="dlg-corpo"></p>
   <div class="dlg-rodape">
     <span class="dlg-pag" id="dlg-pag"></span>
-    <button type="button" class="botao glass glass--azul glass--interativo" id="dlg-btn" tabindex="-1">Continuar →</button>
+    <button type="button" class="botao glass glass--roxo glass--interativo" id="dlg-btn" tabindex="-1">Continuar →</button>
   </div>
 </section>
 
