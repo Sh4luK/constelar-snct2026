@@ -109,7 +109,8 @@ async function iniciar() {
     if (acao) { ev.preventDefault(); cena.interagir(); }
     else if (t === 'm') ui.mapa();
     else if (t === 'b') ui.album();
-    else if (t === 'escape') ui.menu();
+    // O próprio Esc fecharia o painel recém-aberto: abre depois que a tecla termina.
+    else if (t === 'escape') { ev.preventDefault(); setTimeout(() => ui.menu(), 0); }
   });
   for (const tipo of ['pointerdown', 'pointermove', 'wheel']) addEventListener(tipo, () => { ultimoGesto = performance.now(); }, { passive: true });
 

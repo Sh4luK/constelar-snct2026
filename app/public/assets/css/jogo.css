@@ -173,3 +173,28 @@ kbd { display: inline-grid; place-items: center; min-width: 26px; height: 26px; 
 .mapa { max-height: calc(100dvh - 190px); }
 .mapa-terr circle.fundo { fill: #21114e; }
 .mapa-terr:hover circle.fundo, .mapa-terr:focus circle.fundo { fill: #2f1a6b; }
+
+/* Vidro líquido escuro no jogo (HUD, diálogo, painéis) */
+.hud-btn, .hud-contador { position: relative; }
+.vidro-escuro, .painel {
+  isolation: isolate;
+  background: rgb(24 12 60 / .38);
+  -webkit-backdrop-filter: blur(16px) saturate(200%) brightness(1.1);
+  backdrop-filter: blur(16px) saturate(200%) brightness(1.1);
+  border: 1px solid rgb(255 255 255 / .28);
+  box-shadow:
+    inset 0 1.5px 0 rgb(255 255 255 / .38),
+    inset 0 -1px 0 rgb(255 255 255 / .1),
+    inset 0 -14px 22px -16px rgb(182 156 255 / .5),
+    0 10px 30px rgb(0 0 0 / .3);
+}
+.vidro-escuro::after {
+  content: ""; position: absolute; inset: 1px 1px 55% 1px; z-index: -1; pointer-events: none;
+  border-radius: inherit; border-bottom-left-radius: 40% 30%; border-bottom-right-radius: 40% 30%;
+  background: linear-gradient(to bottom, rgb(255 255 255 / .2), rgb(255 255 255 / 0));
+}
+.painel { background: rgb(24 12 60 / .62); }
+.hud-btn.vidro-escuro:active { transform: scale(.92); }
+.dlg-opcao { background: rgb(255 255 255 / .1); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); box-shadow: inset 0 1px 0 rgb(255 255 255 / .25); }
+.leve .vidro-escuro, .leve .painel, .leve .dlg-opcao { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgb(18 9 46 / .94); }
+.leve .vidro-escuro::after { display: none; }
