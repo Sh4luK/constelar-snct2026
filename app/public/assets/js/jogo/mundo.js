@@ -10,6 +10,14 @@ const RAIO_FALA = 104;
 const FONTE = '"Archivo Cond", "Archivo", system-ui, sans-serif';
 const leve = () => document.documentElement.classList.contains('leve');
 
+/** Texto nítido em telas de alta densidade: desenha maior e reduz na mesma proporção. */
+function texto(cena, x, y, conteudo, estilo) {
+  const e = { ...estilo, fontSize: parseFloat(estilo.fontSize) * DPR + 'px' };
+  if (e.padding) e.padding = { x: e.padding.x * DPR, y: e.padding.y * DPR };
+  if (e.wordWrap) e.wordWrap = { width: e.wordWrap.width * DPR };
+  return cena.add.text(x, y, conteudo, e).setScale(1 / DPR);
+}
+
 function rng(semente) {
   return () => {
     semente = (semente + 0x6d2b79f5) | 0;
@@ -142,9 +150,9 @@ export class Mundo extends Phaser.Scene {
     mundo.areas.forEach((a) => this.criarTerritorio(a));
     this.criarJogadora();
 
-    this.aviso = this.add.text(0, 0, '', {
+    this.aviso = texto(this, 0, 0, '', {
       fontFamily: FONTE, fontSize: '17px', color: '#141414', backgroundColor: '#ffd23f', padding: { x: 10, y: 6 },
-    }).setOrigin(0.5, 1).setDepth(99999).setResolution(DPR).setVisible(false).setInteractive({ useHandCursor: true });
+    }).setOrigin(0.5, 1).setDepth(99999).setVisible(false).setInteractive({ useHandCursor: true });
     this.aviso.on('pointerdown', (p, x, y, ev) => { ev.stopPropagation(); this.interagir(); });
 
     this.teclas = this.input.keyboard.addKeys('W,A,S,D,UP,DOWN,LEFT,RIGHT');
@@ -230,8 +238,8 @@ export class Mundo extends Phaser.Scene {
     this.obstaculo(c.x, c.y - 26, 54);
     this.interativos.push({ x: c.x, y: c.y + 4, rotulo: 'ver o mapa do céu', acao: () => this.ui.mapa() });
 
-    this.add.text(c.x, c.y + 196, 'OBSERVATÓRIO DUÍLIA DE MELLO', { fontFamily: FONTE, fontSize: '21px', color: '#f2efe7' })
-      .setOrigin(0.5).setResolution(DPR).setDepth(-5);
+    texto(this, c.x, c.y + 196, 'OBSERVATÓRIO DUÍLIA DE MELLO', { fontFamily: FONTE, fontSize: '21px', color: '#f2efe7' })
+      .setOrigin(0.5).setDepth(-5);
 
     // placas: uma para cada constelação, na borda do deque
     for (const a of m.areas) {
@@ -256,13 +264,13 @@ export class Mundo extends Phaser.Scene {
 
   criarTerritorio(a) {
     const topo = a.centro.y - R_TERRITORIO;
-    this.add.text(a.centro.x, topo - 62, a.constelacao.toUpperCase(), { fontFamily: FONTE, fontSize: '34px', color: '#f2efe7' })
-      .setOrigin(0.5).setResolution(DPR).setDepth(-5);
-    this.add.text(a.centro.x, topo - 28, a.nome, { fontFamily: '"Instrument Serif", Georgia, serif', fontStyle: 'italic', fontSize: '24px', color: a.cor })
-      .setOrigin(0.5).setResolution(DPR).setDepth(-5);
+    texto(this, a.centro.x, topo - 62, a.constelacao.toUpperCase(), { fontFamily: FONTE, fontSize: '34px', color: '#f2efe7' })
+      .setOrigin(0.5).setDepth(-5);
+    texto(this, a.centro.x, topo - 28, a.nome, { fontFamily: '"Instrument Serif", Georgia, serif', fontStyle: 'italic', fontSize: '24px', color: a.cor })
+      .setOrigin(0.5).setDepth(-5);
     if (!a.estrelas.length) {
-      this.add.text(a.centro.x, a.centro.y, 'Aguardando as\nprimeiras estrelas', { fontFamily: '"Instrument Serif", Georgia, serif', fontStyle: 'italic', fontSize: '24px', color: '#f2efe7', align: 'center' })
-        .setOrigin(0.5).setResolution(DPR).setAlpha(0.7);
+      texto(this, a.centro.x, a.centro.y, 'Aguardando as\nprimeiras estrelas', { fontFamily: '"Instrument Serif", Georgia, serif', fontStyle: 'italic', fontSize: '24px', color: '#f2efe7', align: 'center' })
+        .setOrigin(0.5).setAlpha(0.7);
     }
     a.estrelas.forEach((e) => this.criarNpc(e));
     this.desenharFigura(a);
@@ -271,9 +279,9 @@ export class Mundo extends Phaser.Scene {
   criarNpc(e) {
     const acesa = estado.descobertas.has(e.c.id);
     const img = this.add.image(e.x, e.y, acesa ? `ep-${e.area.id}-${e.c.variante}` : 'ep-apagada').setOrigin(0.5, 0.94).setScale(0.5).setDepth(e.y);
-    const rotulo = this.add.text(e.x, e.y + 12, '', { fontFamily: FONTE, fontSize: '15px', align: 'center', padding: { x: 7, y: 4 }, wordWrap: { width: 150 } })
-      .setOrigin(0.5, 0).setResolution(DPR).setDepth(e.y - 1);
-    const zzz = this.add.text(e.x + 26, e.y - 96, 'z z', { fontFamily: FONTE, fontSize: '18px', color: '#b69cff' }).setResolution(DPR).setDepth(e.y);
+    const rotulo = texto(this, e.x, e.y + 12, '', { fontFamily: FONTE, fontSize: '15px', align: 'center', padding: { x: 7, y: 4 }, wordWrap: { width: 150 } })
+      .setOrigin(0.5, 0).setDepth(e.y - 1);
+    const zzz = texto(this, e.x + 26, e.y - 96, 'z z', { fontFamily: FONTE, fontSize: '18px', color: '#b69cff' }).setDepth(e.y);
     if (!REDUZIR) {
       this.tweens.add({ targets: img, scaleY: 0.515, duration: 1300 + (e.c.id % 5) * 160, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
       this.tweens.add({ targets: zzz, y: zzz.y - 10, alpha: 0.3, duration: 1500, yoyo: true, repeat: -1 });

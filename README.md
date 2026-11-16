@@ -1,53 +1,96 @@
-# Constelar — protótipo
+# Constelar
 
-Jogo web que dá visibilidade a mulheres cientistas brasileiras. Cada cientista é uma estrela; cada área do conhecimento, uma constelação. Projeto para a SNCT 2026, em homenagem a Duília de Mello.
+Jogo web que dá visibilidade a mulheres cientistas brasileiras. Cada cientista é uma estrela; cada área do conhecimento, uma constelação. No começo o céu está apagado: é ouvindo a história de cada cientista que ele se acende. Projeto para a SNCT 2026, em homenagem a Duília de Mello, a "Mulher das Estrelas".
 
-Stack: PHP 8.3 (Apache) + MySQL 8.4 + Phaser 3.90 (servido localmente, funciona sem internet).
+PHP 8.3 (Apache) · MySQL 8.4 · Phaser 3.90 · tudo servido localmente (funciona sem internet depois de construído).
 
 ## Rodar
 
 ```sh
-cp .env.example .env      # troque TODAS as senhas (ADMIN_PASSWORD ≥ 10 caracteres)
-docker compose up -d --build
+./iniciar.sh
 ```
 
-Acesse http://localhost:8080. O administrador é criado na subida do container a partir de `ADMIN_EMAIL`/`ADMIN_PASSWORD`.
+O script cria o `.env` com senhas aleatórias (se ainda não existir), constrói a imagem, sobe os containers e espera o site responder em http://localhost:8080. O login do painel é o `ADMIN_EMAIL` do `.env`; a senha está em `ADMIN_PASSWORD`.
 
-Após alterar código em `app/`, rode `docker compose up -d --build` de novo. Para recriar o banco do zero: `docker compose down -v`.
+Sem o script: `cp .env.example .env`, troque as senhas e rode `docker compose up -d`. A imagem é reconstruída a cada `up`, então depois de um `git pull` basta repetir o comando.
 
-## Funcionalidades
-
-| Página | Função |
+| Tarefa | Comando |
 |---|---|
-| `/jogo.php` | Observatório virtual (Phaser): mover com setas/WASD, clique ou toque; `E`/Espaço/Enter ou toque para conversar. Conversar acende a estrela; acender todas completa a constelação. Progresso salvo no navegador. |
-| `/cientistas.php` | Lista das cientistas publicadas. |
-| `/registrar.php`, `/login.php` | Conta de usuário. |
-| `/cadastro-cientista.php` | Indicação de cientista (exige login e declaração de autorização LGPD). Entra como `pendente`. |
-| `/admin/` | Painel do administrador: aprovar, rejeitar, excluir. |
-| `/api/cientistas.php` | JSON consumido pelo jogo. Só retorna `status = aprovado` **e** `autorizacao_uso = 1`. |
+| Ver o que está acontecendo | `docker compose ps` e `docker compose logs --tail 40 db app` |
+| Conferir o site no ar | `./tests/fumaca.sh` |
+| Apagar tudo e recomeçar | `docker compose down -v` |
+| Cópia de segurança do banco | `docker compose exec db sh -c 'mysqldump -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE"' > copia.sql` |
+
+### Na feira
+
+Abra `http://localhost:8080/jogo.php?feira=1` nos computadores do estande: depois de 2 minutos sem uso o jogo recomeça sozinho para o próximo visitante, e o botão de sair para o site some. No menu do jogo há tela cheia, som e "Novo jogo".
+
+### Se o banco não subir
+
+Em computadores antigos, o container `db` fica "unhealthy" e o log mostra `Fatal glibc error: CPU does not support x86-64-v2`: o processador não tem as instruções que a imagem `mysql:8.4` exige. Nesse caso, defina no `.env`:
+
+```
+DB_IMAGE=mariadb:11.4
+```
+
+e recrie o banco (`docker compose down -v` e `./iniciar.sh`). O MariaDB é compatível com tudo o que o projeto usa; a suíte de testes passa nos dois.
+
+Na primeira subida o banco pode levar alguns minutos em disco lento; o Docker espera até 5 minutos antes de desistir.
+
+## O que tem
+
+| Endereço | Função |
+|---|---|
+| `/` | Apresentação do projeto. |
+| `/jogo.php` | O jogo: observatório, 6 constelações, guia (Lume), álbum, mapa, desafio de perguntas e certificado. |
+| `/cientistas.php` | Álbum completo, por constelação. |
+| `/cientista.php?id=N` | Página de uma cientista, com biografia, curiosidade e fontes. |
+| `/sobre.php`, `/privacidade.php` | O projeto, a equipe, as referências e o tratamento de dados (LGPD). |
+| `/registrar.php`, `/login.php`, `/conta.php` | Conta, minhas indicações e troca de senha. |
+| `/cadastro-cientista.php` | Indicar uma cientista (fica pendente até a revisão). |
+| `/admin/` | Painel: aprovar (com registro da autorização), rejeitar com recado, editar, despublicar, excluir. |
+| `/admin/areas.php` | Criar e editar constelações (nome, cor, símbolo, ordem). |
+| `/api/cientistas.php` | Dados do jogo. Só devolve cientistas aprovadas e com autorização. |
+
+### Jogo
+
+- Andar: setas, WASD, clique ou toque. Conversar: `E`, Espaço, Enter ou toque. `M` mapa, `B` álbum, `Esc` menu.
+- O progresso fica só no navegador de quem joga.
+- Desenhos próprios em SVG (`app/src/sprites.php`), usados no site e no jogo. Sons sintetizados, sem arquivos de áudio.
+- Em computador fraco o jogo troca sozinho para o modo Canvas e desliga desfoques e partículas. Para forçar: `?render=canvas` e `?leve=1`.
+- `?debug=1` expõe `window.__constelar` para testes automatizados.
 
 ## Estrutura
 
 ```
-docker-compose.yml   docker/        (Dockerfile, Apache, PHP, entrypoint)
-db/init.sql          esquema + áreas + cientistas de demonstração
-app/src/             bootstrap (PDO, sessão, CSRF, auth, layout)
-app/bin/             seed do administrador
-app/public/          páginas, API, admin, assets (jogo.js, phaser.min.js, CSS)
+iniciar.sh                 sobe tudo com um comando
+docker-compose.yml         serviços db e app
+docker/                    Dockerfile, Apache, PHP, entrypoint
+tests/fumaca.sh            teste de fumaça por HTTP
+app/
+  bin/migrar.php           aplica as migrações na subida do container
+  bin/seed-admin.php       cria/atualiza o administrador do .env
+  db/migracoes/*.sql       esquema e acervo, em ordem numérica
+  src/                     banco, http, seguranca, arte (SVG), layout
+  public/                  páginas, admin/, api/, assets/
+    assets/js/jogo/        nucleo, audio, ui, mundo, main (módulos ES)
+    assets/dados/figuras.json   desenho de cada constelação (site e jogo)
 ```
 
-## Visual
+Para mudar o banco, crie um novo arquivo em `app/db/migracoes/` com o próximo número; ele roda sozinho na próxima subida. Não edite migrações já aplicadas.
 
-- Cores chapadas, sem degradê: roxo `#6a2cff`, papel `#f2efe7`, tinta `#141414`, amarelo, vermelho, rosa e laranja de apoio. Títulos em Archivo condensada pesada com destaques em Instrument Serif itálica, adesivos com contorno em tinta, selo-estouro, mascote estrela e cartões com borda de 2px. Fontes servidas localmente (OFL em `app/public/assets/fonts/`).
-- Vidro em botões e menus: classe `.glass` (+ `--claro`, `--tinta`, `--roxo`, `--escuro`, `--interativo`) com `backdrop-filter` e fio de luz; reflexo leve segue o ponteiro (`glass.js`). Sem suporte a `backdrop-filter` ou com `prefers-reduced-transparency`, vira fundo sólido. `expo-glass-effect` é exclusivo de React Native/iOS e não se aplica à web.
-- No jogo, HUD, diálogo, avisos e botão de voltar são HTML com vidro sobre o canvas.
+## Segurança
 
-## Segurança aplicada
+PDO com consultas preparadas; senhas com `password_hash`; token CSRF em todo POST; sessão regenerada no login e expirada após 2 horas sem uso; limite de tentativas de login por IP; saída sempre escapada; CSP sem scripts ou estilos inline; papel de administrador reconferido no banco a cada acesso; visitante anônimo não recebe cookie.
 
-PDO com prepared statements; `password_hash`; CSRF em todo POST; `session_regenerate_id` no login; limite de tentativas de login por IP; saída escapada (`htmlspecialchars`) e CSP sem scripts inline; redirecionamento só para caminhos locais.
+## Pendências antes do uso público
 
-## Pendências antes de publicar
+- **Autorizações (LGPD).** O acervo inicial é de demonstração. As cientistas vivas estão marcadas no painel como "Autorização a confirmar": registre a autorização de cada uma (em "Editar") ou despublique.
+- **Conferir os textos.** As biografias foram escritas a partir de fontes públicas e conferidas por busca, mas a equipe deve revisar cada uma com as fontes citadas.
+- **HTTPS.** Para publicar na internet, coloque um proxy reverso com HTTPS na frente; o cookie de sessão passa a ser `Secure` automaticamente.
+- **Contato.** Preencha `CONTATO_EMAIL` no `.env` para que a página de privacidade informe onde pedir correção ou retirada de dados.
+- Não há recuperação de senha por e-mail (o administrador é redefinido pelo `.env`).
 
-- Servir atrás de HTTPS (proxy reverso). O cookie de sessão vira `Secure` automaticamente quando a requisição chega por HTTPS.
-- Os 9 registros em `db/init.sql` são dados de demonstração compilados de fontes públicas: revisar com fontes e registrar a autorização de cada cientista viva (LGPD) antes do uso público.
-- Sem recuperação de senha nem verificação de e-mail.
+## Créditos
+
+Tipografia: Archivo e Instrument Serif (SIL Open Font License; licenças em `app/public/assets/fonts/`). Motor do jogo: Phaser 3 (MIT).
