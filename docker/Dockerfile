@@ -9,6 +9,8 @@ COPY docker/php.ini "$PHP_INI_DIR/conf.d/zz-constelar.ini"
 COPY docker/entrypoint.sh /usr/local/bin/constelar-entrypoint
 COPY app/ /var/www/app/
 
+# Remove CR de arquivos vindos de clone no Windows (CRLF quebra o script de entrada).
+RUN sed -i 's/\r$//' /usr/local/bin/constelar-entrypoint
 RUN chmod +x /usr/local/bin/constelar-entrypoint \
  && chown -R root:root /var/www/app \
  && chmod -R a+rX,go-w /var/www/app
