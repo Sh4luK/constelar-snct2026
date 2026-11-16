@@ -1,6 +1,10 @@
+# Constelar — PHP 8.3 (Apache) + MySQL.
+# Subir: ./iniciar.sh   (ou: docker compose up -d)
 services:
   db:
-    image: mysql:8.4
+    # Padrão: MySQL 8.4. Em processadores antigos (sem SSE4.2) essa imagem não inicia;
+    # nesse caso defina DB_IMAGE=mariadb:11.4 no .env (compatível com o projeto).
+    image: ${DB_IMAGE:-mysql:8.4}
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: ${DB_NAME:-constelar}
@@ -10,17 +14,26 @@ services:
     command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
     volumes:
       - db_data:/var/lib/mysql
-      - ./db/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u$$MYSQL_USER -p$$MYSQL_PASSWORD --silent"]
+      test:
+        - CMD-SHELL
+        - >-
+          if command -v healthcheck.sh >/dev/null 2>&1;
+          then healthcheck.sh --connect --innodb_initialized;
+          else mysqladmin ping -h 127.0.0.1 -u"$$MYSQL_USER" -p"$$MYSQL_PASSWORD" --silent;
+          fi
       interval: 5s
       timeout: 5s
-      retries: 30
+      retries: 12
+      # A primeira inicialização cria o banco e pode levar minutos em disco lento.
+      start_period: 300s
 
   app:
     build:
       context: .
       dockerfile: docker/Dockerfile
+    # Reconstrói a imagem a cada "up": o código de app/ vai dentro dela.
+    pull_policy: build
     restart: unless-stopped
     depends_on:
       db:
@@ -32,6 +45,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       ADMIN_EMAIL: ${ADMIN_EMAIL:?defina ADMIN_EMAIL no .env}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:?defina ADMIN_PASSWORD no .env}
+      CONTATO_EMAIL: ${CONTATO_EMAIL:-}
     ports:
       - "${APP_PORT:-8080}:80"
 

@@ -2,22 +2,26 @@
 declare(strict_types=1);
 require __DIR__ . '/../../src/bootstrap.php';
 
+// Dados do jogo: apenas cientistas publicadas (aprovadas e com autorização registrada).
+$areas = array_map(fn ($a) => [
+    'id' => $a['id'], 'nome' => $a['nome'], 'constelacao' => $a['constelacao'],
+    'descricao' => $a['descricao'], 'cor' => $a['cor'], 'icone' => $a['icone'],
+], areas());
+
+$cientistas = array_map(fn ($c) => [
+    'id' => $c['id'], 'numero' => $c['numero'], 'nome' => $c['nome'], 'area_id' => $c['area_id'],
+    'instituicao' => $c['instituicao'], 'biografia' => $c['biografia'], 'curiosidade' => $c['curiosidade'],
+    'destaque' => $c['destaque'], 'variante' => $c['variante'],
+], cientistas_publicadas());
+
+$json = json_encode(['areas' => $areas, 'cientistas' => $cientistas], JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
+$etag = '"' . md5($json) . '"';
+
 header('Content-Type: application/json; charset=utf-8');
-header('Cache-Control: public, max-age=60');
-
-$areas = db()->query('SELECT id, nome, constelacao, descricao, cor FROM areas ORDER BY id')->fetchAll();
-$cientistas = db()->query("SELECT id, nome, area_id, instituicao, biografia, curiosidade
-                           FROM cientistas
-                           WHERE status = 'aprovado' AND autorizacao_uso = 1
-                           ORDER BY area_id, id")->fetchAll();
-
-foreach ($areas as &$a) {
-    $a['id'] = (int) $a['id'];
+header('Cache-Control: no-cache');
+header('ETag: ' . $etag);
+if (($_SERVER['HTTP_IF_NONE_MATCH'] ?? '') === $etag) {
+    http_response_code(304);
+    exit;
 }
-foreach ($cientistas as &$c) {
-    $c['id'] = (int) $c['id'];
-    $c['area_id'] = (int) $c['area_id'];
-}
-unset($a, $c);
-
-echo json_encode(['areas' => $areas, 'cientistas' => $cientistas], JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
+echo $json;

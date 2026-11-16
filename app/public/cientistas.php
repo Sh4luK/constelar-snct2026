@@ -2,25 +2,57 @@
 declare(strict_types=1);
 require __DIR__ . '/../src/bootstrap.php';
 
-$lista = db()->query("SELECT c.nome, c.instituicao, c.biografia, a.nome AS area, a.cor
-                      FROM cientistas c JOIN areas a ON a.id = c.area_id
-                      WHERE c.status = 'aprovado' AND c.autorizacao_uso = 1
-                      ORDER BY a.nome, c.nome")->fetchAll();
+$areas = areas();
+$porArea = [];
+foreach (cientistas_publicadas() as $c) {
+    $porArea[$c['area_id']][] = $c;
+}
+$total = array_sum(array_map('count', $porArea));
 
-cabecalho('Cientistas');
+cabecalho('Álbum de estrelas', [
+    'descricao' => 'O álbum completo do Constelar: ' . $total . ' cientistas brasileiras em ' . count($areas) . ' constelações.',
+]);
 ?>
-<header class="cabecalho-pagina">
+<header class="cabeca-pagina">
   <p class="kicker">Todas as estrelas</p>
-  <h1 class="titulo-secao">Cientistas no<br><em>Constelar</em></h1>
+  <h1 class="titulo-pagina">O álbum <em>de estrelas</em></h1>
+  <p class="lede"><?= $total ?> cientistas brasileiras em <?= count($areas) ?> constelações. No jogo, cada figurinha é conquistada quando você ouve a história da cientista.</p>
 </header>
-<div class="grade">
-<?php foreach ($lista as $c): ?>
-  <article class="cartao cientista">
-    <p class="etiqueta"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="<?= e($c['cor']) ?>" d="M12 2l2.9 6.9L22 10l-5.5 4.7L18.2 22 12 18.3 5.8 22l1.7-7.3L2 10l7.1-1.1z"/></svg> <?= e($c['area']) ?></p>
-    <h2><?= e($c['nome']) ?></h2>
-    <?php if ($c['instituicao']): ?><p class="inst"><?= e($c['instituicao']) ?></p><?php endif; ?>
-    <p><?= e($c['biografia']) ?></p>
-  </article>
+
+<nav class="album-nav vidro" aria-label="Constelações">
+  <?php foreach ($areas as $a): ?>
+    <a class="area-<?= $a['id'] ?>" href="#area-<?= $a['id'] ?>"><?= simbolo('i-' . $a['icone'], 'album-nav-ic') ?><?= e($a['nome']) ?><span><?= $a['total'] ?></span></a>
+  <?php endforeach; ?>
+</nav>
+
+<?php foreach ($areas as $i => $a): $lista = $porArea[$a['id']] ?? []; ?>
+<section class="album-secao area-<?= $a['id'] ?>" id="area-<?= $a['id'] ?>">
+  <header class="album-cabeca">
+    <div class="carta carta--fixa">
+      <span class="carta-num">Carta nº <?= sprintf('%02d', $i + 1) ?></span>
+      <?= figura_svg($a['icone'], count($lista), 'carta-figura', null, 'Desenho da ' . $a['constelacao']) ?>
+    </div>
+    <div class="album-titulo">
+      <p class="kicker"><?= e($a['nome']) ?></p>
+      <h2 class="titulo-secao"><?= e($a['constelacao']) ?></h2>
+      <p><?= e($a['descricao']) ?></p>
+    </div>
+  </header>
+  <?php if ($lista): ?>
+    <div class="figurinhas">
+      <?php foreach ($lista as $c): ?><?= figurinha($c, 'revelar') ?><?php endforeach; ?>
+    </div>
+  <?php else: ?>
+    <p class="vazio">Esta constelação ainda espera suas primeiras estrelas. <a href="/cadastro-cientista.php">Indique uma cientista</a>.</p>
+  <?php endif; ?>
+</section>
 <?php endforeach; ?>
-</div>
+
+<section class="secao secao--final">
+  <h2 class="titulo-secao">Complete o álbum<br><em>jogando.</em></h2>
+  <div class="grupo-botoes">
+    <a class="botao botao--roxo botao--grande" href="/jogo.php">Abrir o observatório <?= simbolo('u-seta', 'ic') ?></a>
+    <a class="botao botao--grande" href="/cadastro-cientista.php">Indicar cientista</a>
+  </div>
+</section>
 <?php rodape();
