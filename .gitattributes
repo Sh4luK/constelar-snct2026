@@ -1,0 +1,6 @@
+# Scripts que rodam dentro do container Linux precisam de fim de linha LF, mesmo no Windows.
+*.sh text eol=lf
+*.sql text eol=lf
+*.php text eol=lf
+docker/* text eol=lf
+*.woff2 binary
