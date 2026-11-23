@@ -3,159 +3,156 @@ declare(strict_types=1);
 require __DIR__ . '/../src/bootstrap.php';
 
 $areas = areas();
-$cientistas = cientistas_publicadas();
-$total = count($cientistas);
+$s = estatisticas();
+$temas = array_values(array_filter(temas(), fn ($t) => $t['total'] > 0));
 $homenageada = null;
-foreach ($cientistas as $c) {
+foreach (cientistas_publicadas() as $c) {
     if ($c['destaque']) {
         $homenageada = $c;
         break;
     }
 }
+$recentes = buscar_cientistas(filtros_da_url(['ordem' => 'recentes']), 4)['itens'];
 
-// Vitrine do álbum: uma figurinha por constelação, depois completa até 8.
-$vitrine = [];
-$usadas = [];
-foreach ($cientistas as $c) {
-    if (!isset($usadas[$c['area_id']])) {
-        $usadas[$c['area_id']] = true;
-        $vitrine[$c['id']] = $c;
-    }
-}
-foreach ($cientistas as $c) {
-    if (count($vitrine) >= 8) {
-        break;
-    }
-    $vitrine[$c['id']] ??= $c;
-}
-
-cabecalho('Cada cientista é uma estrela');
+cabecalho('Acervo de mulheres cientistas brasileiras');
 ?>
-<section class="hero">
+<section class="hero hero--ferramenta">
   <svg class="ceu-hero" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
     <path class="ceu-tracos" pathLength="1" d="M70 120L190 70L280 160L170 250ZM940 80L1060 140L1140 60M1060 140L1010 260L1130 320M90 480L230 540L330 470M880 520L990 470L1110 540"/>
     <g class="ceu-brilhos">
       <path d="M190 58l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/><path d="M1060 128l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/>
       <path d="M1010 248l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/><path d="M230 528l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/>
-      <path d="M990 458l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/><path d="M70 108l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/>
     </g>
   </svg>
-
-  <span class="adesivo adesivo--vermelho ad1" aria-hidden="true">Ciência é<br>pra elas!</span>
   <span class="adesivo adesivo--amarelo ad2" aria-hidden="true">SNCT ★ 2026</span>
-  <svg class="estouro" viewBox="0 0 120 120" aria-hidden="true">
-    <polygon points="60.0,0.0 70.5,14.2 86.0,5.9 89.3,23.3 106.9,22.6 102.3,39.6 118.5,46.6 107.0,60.0 118.5,73.4 102.3,80.4 106.9,97.4 89.3,96.7 86.0,114.1 70.5,105.8 60.0,120.0 49.5,105.8 34.0,114.1 30.7,96.7 13.1,97.4 17.7,80.4 1.5,73.4 13.0,60.0 1.5,46.6 17.7,39.6 13.1,22.6 30.7,23.3 34.0,5.9 49.5,14.2"/>
-    <text class="estouro-num" x="60" y="62" text-anchor="middle"><?= $total ?></text>
-    <text class="estouro-rot" x="60" y="80" text-anchor="middle">ESTRELAS</text>
-  </svg>
   <?= simbolo('s-lume', 'mascote') ?>
 
-  <p class="hero-sub">Um jogo para conhecer as mulheres<br>que fazem a ciência brasileira</p>
-  <h1 class="mega">
-    <span class="linha"><span>Cada cientista</span></span>
-    <span class="linha"><span>é uma <em>estrela</em></span></span>
+  <p class="hero-sub">Acervo aberto e colaborativo</p>
+  <h1 class="mega mega--ferramenta">
+    <span class="linha"><span>Mulheres que fazem</span></span>
+    <span class="linha"><span>a <em>ciência</em> brasileira</span></span>
   </h1>
 
-  <div class="hero-acoes">
-    <a class="botao botao--tinta botao--grande" href="/jogo.php">Começar a explorar <?= simbolo('u-seta', 'ic') ?></a>
-    <a class="botao botao--claro botao--grande" href="/cientistas.php">Ver o álbum</a>
-  </div>
+  <form class="busca-hero vidro" method="get" action="/cientistas.php" role="search">
+    <label class="sr" for="q-hero">Buscar no acervo</label>
+    <input id="q-hero" type="search" name="q" placeholder="Busque por nome, instituição ou assunto…" maxlength="80">
+    <select name="area" aria-label="Área">
+      <option value="">Todas as áreas</option>
+      <?php foreach ($areas as $a): ?><option value="<?= $a['id'] ?>"><?= e($a['nome']) ?></option><?php endforeach; ?>
+    </select>
+    <button class="botao botao--tinta">Buscar</button>
+  </form>
 
-  <ul class="faixa" aria-label="Constelações">
-    <?php foreach ($areas as $a): ?>
-      <li class="area-<?= $a['id'] ?>"><?= simbolo('i-' . $a['icone'], 'faixa-ic') ?><?= e($a['nome']) ?></li>
-    <?php endforeach; ?>
+  <ul class="hero-numeros">
+    <li><strong><?= $s['cientistas'] ?></strong> cientistas</li>
+    <li><strong><?= $s['areas'] ?></strong> áreas</li>
+    <li><strong><?= $s['temas'] ?></strong> temas</li>
+    <li><strong><?= $s['instituicoes'] ?></strong> instituições</li>
   </ul>
 </section>
 
-<?php if ($cientistas): ?>
-<div class="letreiro" aria-hidden="true">
-  <div class="letreiro-trilho">
-    <?php for ($v = 0; $v < 2; $v++): foreach ($cientistas as $i => $c): ?>
-      <span class="<?= $i % 2 ? 'vazado' : '' ?>"><?= e($c['nome']) ?></span><?= simbolo('u-estrela', 'letreiro-estrela') ?>
-    <?php endforeach; endfor; ?>
+<section class="secao" id="areas">
+  <div class="secao-cabeca">
+    <div>
+      <p class="kicker">Navegue pelo acervo</p>
+      <h2 class="titulo-secao">Por área <em>do conhecimento</em></h2>
+    </div>
+    <a class="botao" href="/cientistas.php">Ver tudo em tabela <?= simbolo('u-seta', 'ic') ?></a>
   </div>
-</div>
+  <div class="areas-grade">
+    <?php foreach ($areas as $a): ?>
+      <a class="area-cartao area-<?= $a['id'] ?>" href="/cientistas.php?area=<?= $a['id'] ?>">
+        <?= simbolo('i-' . $a['icone'], 'area-cartao-ic') ?>
+        <span class="area-cartao-nome"><?= e($a['nome']) ?></span>
+        <span class="area-cartao-total"><?= $a['total'] ?> <?= $a['total'] === 1 ? 'cientista' : 'cientistas' ?></span>
+      </a>
+    <?php endforeach; ?>
+  </div>
+
+  <?php if ($temas): ?>
+    <h3 class="sub-titulo">Por tema de pesquisa</h3>
+    <p class="nuvem">
+      <?php foreach ($temas as $t): ?><a class="chip chip--grande" href="/cientistas.php?tema=<?= $t['id'] ?>"><?= e($t['nome']) ?> <span><?= $t['total'] ?></span></a><?php endforeach; ?>
+    </p>
+  <?php endif; ?>
+</section>
+
+<?php if ($recentes): ?>
+<section class="secao">
+  <div class="secao-cabeca">
+    <div>
+      <p class="kicker">Últimas entradas</p>
+      <h2 class="titulo-secao">Adicionadas <em>recentemente</em></h2>
+    </div>
+    <a class="botao" href="/cientistas.php?ordem=recentes">Mais recentes <?= simbolo('u-seta', 'ic') ?></a>
+  </div>
+  <div class="cartoes-acervo">
+    <?php foreach ($recentes as $c): ?>
+      <article class="cartao ficha-acervo area-<?= $c['area_id'] ?>">
+        <span class="ficha-arte"><?= simbolo('s-ep-' . $c['variante'], 'ficha-personagem') ?></span>
+        <div>
+          <p class="miudo"><?= e($c['area']) ?></p>
+          <h3 class="ficha-nome"><a href="/cientista.php?id=<?= $c['id'] ?>"><?= e($c['nome']) ?></a></h3>
+          <?php if ($c['instituicao']): ?><p class="ficha-inst"><?= e($c['instituicao']) ?></p><?php endif; ?>
+          <p><?= e(primeira_frase($c['biografia'], 150)) ?></p>
+        </div>
+      </article>
+    <?php endforeach; ?>
+  </div>
+</section>
 <?php endif; ?>
 
 <section class="secao" id="como">
   <p class="kicker">Como funciona</p>
-  <h2 class="titulo-secao">Explore o céu.<br><em>Acenda as estrelas.</em></h2>
-  <ol class="passos">
-    <li class="passo revelar">
-      <span class="passo-arte passo-arte--roxo"><?= simbolo('s-astronauta', 'passo-desenho') ?></span>
-      <span class="passo-num">01</span>
-      <h3>Explore</h3>
-      <p>Caminhe pelo Observatório Duília de Mello com o teclado, o mouse ou tocando na tela.</p>
-    </li>
-    <li class="passo revelar">
-      <span class="passo-arte passo-arte--amarelo area-0"><?= simbolo('s-ep-2', 'passo-desenho') ?></span>
-      <span class="passo-num">02</span>
-      <h3>Converse</h3>
-      <p>Cada estrela guarda a história de uma cientista brasileira. Ouça a história para acendê-la.</p>
-    </li>
-    <li class="passo revelar">
-      <span class="passo-arte passo-arte--tinta area-0"><?= figura_svg('telescopio', 4, 'passo-figura') ?></span>
-      <span class="passo-num">03</span>
-      <h3>Complete</h3>
-      <p>Acenda todas as estrelas de uma área para completar a constelação e encher o seu álbum.</p>
-    </li>
+  <h2 class="titulo-secao">Um banco de dados <em>colaborativo</em></h2>
+  <ol class="fluxo">
+    <li class="cartao"><span class="fluxo-num">1</span><h3>Pesquise</h3><p>Filtre por área, tema e instituição. Cada ficha traz biografia, curiosidade e fontes.</p></li>
+    <li class="cartao"><span class="fluxo-num">2</span><h3>Indique</h3><p>Crie uma conta e cadastre uma cientista que ainda não está no acervo.</p></li>
+    <li class="cartao"><span class="fluxo-num">3</span><h3>Revisão</h3><p>A administração confere as fontes e registra a autorização de uso dos dados (LGPD).</p></li>
+    <li class="cartao"><span class="fluxo-num">4</span><h3>Publicação</h3><p>A cientista entra no acervo, nos dados abertos e ganha uma estrela no jogo.</p></li>
   </ol>
 </section>
 
-<section class="secao" id="constelacoes">
-  <p class="kicker">O mapa do céu</p>
-  <h2 class="titulo-secao"><?= count($areas) ?> constelações,<br><em>uma para cada área.</em></h2>
-  <div class="cartas">
-    <?php foreach ($areas as $i => $a): ?>
-      <a class="carta area-<?= $a['id'] ?> revelar" href="/cientistas.php#area-<?= $a['id'] ?>">
-        <span class="carta-num">Carta nº <?= sprintf('%02d', $i + 1) ?></span>
-        <?= figura_svg($a['icone'], $a['total'], 'carta-figura') ?>
-        <span class="carta-pe">
-          <strong class="carta-nome"><?= e($a['constelacao']) ?></strong>
-          <span class="carta-area"><?= e($a['nome']) ?></span>
-        </span>
-        <span class="carta-total"><?= $a['total'] ?> <?= $a['total'] === 1 ? 'estrela' : 'estrelas' ?></span>
-      </a>
-    <?php endforeach; ?>
-  </div>
-</section>
-
-<?php if ($vitrine): ?>
-<section class="secao" id="album">
-  <div class="secao-cabeca">
-    <div>
-      <p class="kicker">O álbum</p>
-      <h2 class="titulo-secao">Uma figurinha<br><em>para cada cientista.</em></h2>
+<section class="bloco-jogo revelar">
+  <div class="bloco-texto">
+    <p class="kicker">Modo jogo</p>
+    <h2 class="citacao">Explore o acervo <em>como um céu</em>.</h2>
+    <p>No Observatório Duília de Mello, cada cientista do banco de dados é uma estrela e cada área é uma constelação. Converse com as estrelas, complete constelações, encha o álbum de figurinhas e enfrente o desafio de perguntas.</p>
+    <div class="grupo-botoes">
+      <a class="botao botao--claro botao--grande" href="/jogo.php">Abrir o jogo <?= simbolo('u-seta', 'ic') ?></a>
+      <a class="botao botao--tinta botao--grande" href="/cientistas.php?vista=album">Ver o álbum</a>
     </div>
-    <a class="botao" href="/cientistas.php">Ver as <?= $total ?> figurinhas <?= simbolo('u-seta', 'ic') ?></a>
   </div>
-  <div class="vitrine">
-    <?php foreach ($vitrine as $c): ?><?= figurinha($c) ?><?php endforeach; ?>
+  <div class="bloco-jogo-arte" aria-hidden="true">
+    <?= figura_svg('telescopio', 4, 'bloco-jogo-figura') ?>
+    <?= simbolo('s-astronauta', 'bloco-jogo-astro') ?>
   </div>
 </section>
-<?php endif; ?>
 
 <section class="bloco-tinta revelar">
   <span class="adesivo adesivo--rosa ad-sn" aria-hidden="true">★ SN 1997D</span>
   <div class="bloco-texto">
     <p class="kicker">Homenageada</p>
     <h2 class="citacao">Duília de Mello, a <em>“Mulher das Estrelas”</em>.</h2>
-    <p>Astrônoma brasileira que descobriu a supernova SN 1997D, colabora com a NASA e atua na divulgação científica para incentivar crianças e jovens a seguir carreira em ciência. O observatório do jogo leva o seu nome.</p>
+    <p>Astrônoma brasileira que descobriu a supernova SN 1997D, colabora com a NASA e atua na divulgação científica para incentivar crianças e jovens a seguir carreira em ciência.</p>
     <?php if ($homenageada): ?>
-      <a class="botao botao--claro" href="/cientista.php?id=<?= $homenageada['id'] ?>">Conhecer a história <?= simbolo('u-seta', 'ic') ?></a>
+      <a class="botao botao--claro" href="/cientista.php?id=<?= $homenageada['id'] ?>">Ver a ficha <?= simbolo('u-seta', 'ic') ?></a>
     <?php endif; ?>
   </div>
   <?= simbolo('s-telescopio', 'bloco-desenho') ?>
 </section>
 
-<section class="secao secao--final">
-  <p class="kicker">Participe</p>
-  <h2 class="titulo-secao">Conhece uma cientista<br><em>que deveria estar aqui?</em></h2>
-  <p class="lede">Crie uma conta e indique. Toda indicação passa pela revisão da administração, e só publicamos cientistas que autorizaram o uso de seus dados.</p>
-  <div class="grupo-botoes">
-    <a class="botao botao--roxo botao--grande" href="/cadastro-cientista.php">Indicar cientista</a>
-    <a class="botao botao--grande" href="/sobre.php">Sobre o projeto</a>
+<section class="secao secao--final secao--duas">
+  <div>
+    <p class="kicker">Participe</p>
+    <h2 class="titulo-secao">Falta alguém <em>no acervo?</em></h2>
+  </div>
+  <div>
+    <p class="lede">Indique uma cientista. Toda indicação passa pela revisão da administração, e só publicamos quem autorizou o uso dos dados.</p>
+    <div class="grupo-botoes">
+      <a class="botao botao--roxo botao--grande" href="/cadastro-cientista.php">Indicar cientista</a>
+      <a class="botao botao--grande" href="/dados.php">Ver os dados</a>
+    </div>
   </div>
 </section>
 <?php rodape();

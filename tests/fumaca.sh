@@ -13,7 +13,7 @@ espera() { local c; c=$(codigo "${@:3}"); [ "$c" = "$2" ] && ok "$1 ($c)" || fal
 echo "Constelar em $BASE"
 
 echo "Páginas públicas"
-for p in / /cientistas.php /sobre.php /privacidade.php /jogo.php /login.php /registrar.php /saude.php /areas.css.php /assets/dados/figuras.json; do
+for p in / /cientistas.php "/cientistas.php?q=usp&vista=cartoes" /dados.php "/exportar.php?formato=csv" /sobre.php /privacidade.php /jogo.php /login.php /registrar.php /saude.php /areas.css.php /assets/dados/figuras.json; do
   espera "GET $p" 200 "$BASE$p"
 done
 espera "página inexistente" 404 "$BASE/nao-existe"

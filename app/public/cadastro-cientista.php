@@ -7,6 +7,8 @@ const MAX_PENDENTES = 10;
 $u = exigir_login();
 $areas = areas();
 $idsAreas = array_column($areas, 'id');
+$temas = temas();
+$temasMarcados = array_map('intval', (array) ($_POST['temas'] ?? []));
 $erros = [];
 $d = ['nome' => '', 'area_id' => 0, 'instituicao' => '', 'biografia' => '', 'curiosidade' => '', 'fonte' => ''];
 
@@ -49,6 +51,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             "INSERT INTO cientistas (nome, area_id, instituicao, biografia, curiosidade, fonte, autorizacao_uso, status, enviado_por)
              VALUES (?, ?, NULLIF(?, ''), ?, NULLIF(?, ''), ?, 1, 'pendente', ?)"
         )->execute([$d['nome'], $d['area_id'], $d['instituicao'], $d['biografia'], $d['curiosidade'], $d['fonte'], $u['id']]);
+        $idsValidos = array_column($temas, 'id');
+        salvar_temas((int) db()->lastInsertId(), array_intersect($temasMarcados, $idsValidos), '');
         flash('Indicação enviada! Ela aparece no álbum e no jogo depois da revisão da administração.');
         redirecionar('/conta.php');
     }
@@ -87,6 +91,14 @@ cabecalho('Indicar cientista', ['privado' => true]);
       <label class="campo">Curiosidade <span class="campo-ajuda">opcional; uma frase marcante</span>
         <textarea name="curiosidade" maxlength="500" rows="3" data-contador><?= e($d['curiosidade']) ?></textarea>
       </label>
+      <fieldset class="campo campo-temas">
+        <legend>Temas <span class="campo-ajuda">opcional; ajudam na busca</span></legend>
+        <div class="temas-marcar">
+          <?php foreach ($temas as $t): ?>
+            <label class="chip-check"><input type="checkbox" name="temas[]" value="<?= $t['id'] ?>" <?= in_array($t['id'], $temasMarcados, true) ? 'checked' : '' ?>><span><?= e($t['nome']) ?></span></label>
+          <?php endforeach; ?>
+        </div>
+      </fieldset>
       <label class="campo">Fontes <span class="campo-ajuda">sites, artigos, entrevistas</span>
         <input name="fonte" required maxlength="500" value="<?= e($d['fonte']) ?>">
       </label>

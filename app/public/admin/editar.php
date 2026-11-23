@@ -12,6 +12,8 @@ if (!$c) {
     nao_encontrado();
 }
 
+$temas = temas();
+$temasMarcados = array_column(temas_por_cientista([$id])[$id] ?? [], 'id');
 $areas = areas();
 $idsAreas = array_column($areas, 'id');
 $erros = [];
@@ -54,6 +56,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $c['nome'], $c['area_id'], $c['instituicao'], $c['biografia'], $c['curiosidade'],
             $c['fonte'], $c['autorizacao_registro'], $c['destaque'], $admin['id'], $id,
         ]);
+        $temasMarcados = array_map('intval', (array) ($_POST['temas'] ?? []));
+        salvar_temas($id, array_intersect($temasMarcados, array_column($temas, 'id')), texto_post('temas_novos', 300));
         flash('Alterações salvas.');
         redirecionar('/admin/?status=' . $c['status'] . '#c' . $id);
     }
@@ -91,6 +95,15 @@ cabecalho('Editar cientista', ['privado' => true]);
   <label class="campo">Curiosidade
     <textarea name="curiosidade" maxlength="500" rows="3" data-contador><?= e((string) $c['curiosidade']) ?></textarea>
   </label>
+  <fieldset class="campo campo-temas">
+    <legend>Temas</legend>
+    <div class="temas-marcar">
+      <?php foreach ($temas as $t): ?>
+        <label class="chip-check"><input type="checkbox" name="temas[]" value="<?= $t['id'] ?>" <?= in_array($t['id'], $temasMarcados, true) ? 'checked' : '' ?>><span><?= e($t['nome']) ?></span></label>
+      <?php endforeach; ?>
+    </div>
+    <input name="temas_novos" maxlength="300" placeholder="Novos temas, separados por vírgula" aria-label="Novos temas">
+  </fieldset>
   <label class="campo">Fontes
     <input name="fonte" required maxlength="500" value="<?= e($c['fonte']) ?>">
   </label>

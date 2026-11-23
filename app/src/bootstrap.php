@@ -8,6 +8,7 @@ declare(strict_types=1);
  *   http.php       saída segura, redirecionamento, mensagens, erros
  *   seguranca.php  sessão, CSRF, login, limites
  *   arte.php       desenhos em SVG (sprites, constelações, figurinhas)
+ *   acervo.php     busca, filtros, temas e estatísticas do acervo
  *   layout.php     cabeçalho e rodapé
  */
 
@@ -17,6 +18,7 @@ require __DIR__ . '/banco.php';
 require __DIR__ . '/http.php';
 require __DIR__ . '/seguranca.php';
 require __DIR__ . '/arte.php';
+require __DIR__ . '/acervo.php';
 require __DIR__ . '/layout.php';
 
 set_exception_handler('tratar_erro_fatal');

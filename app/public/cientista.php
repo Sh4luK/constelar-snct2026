@@ -14,6 +14,7 @@ $pos = $c['numero'] - 1;
 $anterior = $todas[$pos - 1] ?? null;
 $proxima = $todas[$pos + 1] ?? null;
 $outras = array_values(array_filter($vizinhas, fn ($x) => $x['id'] !== $c['id']));
+$temasDela = temas_por_cientista([$c['id']])[$c['id']] ?? [];
 
 cabecalho($c['nome'], ['descricao' => primeira_frase($c['biografia'])]);
 ?>
@@ -37,6 +38,9 @@ cabecalho($c['nome'], ['descricao' => primeira_frase($c['biografia'])]);
     <p class="kicker"><a href="/cientistas.php#area-<?= $c['area_id'] ?>"><?= e($c['constelacao']) ?></a> · <?= e($c['area']) ?></p>
     <h1 class="titulo-pagina titulo-pagina--nome"><?= e($c['nome']) ?></h1>
     <?php if ($c['instituicao']): ?><p class="perfil-inst"><?= e($c['instituicao']) ?></p><?php endif; ?>
+    <?php if ($temasDela): ?>
+      <p class="perfil-temas"><?php foreach ($temasDela as $t): ?><a class="chip" href="/cientistas.php?tema=<?= $t['id'] ?>"><?= e($t['nome']) ?></a><?php endforeach; ?></p>
+    <?php endif; ?>
 
     <p class="perfil-bio"><?= e($c['biografia']) ?></p>
 
@@ -50,8 +54,8 @@ cabecalho($c['nome'], ['descricao' => primeira_frase($c['biografia'])]);
     <p class="fontes"><strong>Fontes</strong> <?= e($c['fonte']) ?></p>
 
     <div class="grupo-botoes">
-      <a class="botao botao--roxo" href="/jogo.php">Encontrar no jogo <?= simbolo('u-seta', 'ic') ?></a>
-      <a class="botao" href="/cientistas.php#area-<?= $c['area_id'] ?>">Voltar ao álbum</a>
+      <a class="botao botao--roxo" href="/cientistas.php?area=<?= $c['area_id'] ?>">Mais de <?= e($c['area']) ?> <?= simbolo('u-seta', 'ic') ?></a>
+      <a class="botao" href="/jogo.php">Encontrar no jogo</a>
     </div>
   </div>
 </article>

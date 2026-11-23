@@ -5,10 +5,11 @@ declare(strict_types=1);
 function links_nav(): array
 {
     return [
-        ['/jogo.php', 'Jogar'],
-        ['/cientistas.php', 'Álbum'],
-        ['/sobre.php', 'Sobre'],
+        ['/cientistas.php', 'Acervo'],
+        ['/dados.php', 'Dados'],
         ['/cadastro-cientista.php', 'Indicar'],
+        ['/jogo.php', 'Jogo'],
+        ['/sobre.php', 'Sobre'],
     ];
 }
 
@@ -50,7 +51,7 @@ function cabecalho(string $titulo, array $op = []): void
 {
     $f = flash();
     $atual = str_replace('index.php', '', (string) ($_SERVER['SCRIPT_NAME'] ?? '/'));
-    $descricao = $op['descricao'] ?? 'Um jogo web para conhecer mulheres cientistas brasileiras: cada cientista é uma estrela, cada área do conhecimento é uma constelação.';
+    $descricao = $op['descricao'] ?? 'Acervo pesquisável de mulheres cientistas brasileiras, com banco de dados colaborativo, dados abertos e um jogo para explorar o conteúdo.';
     ?><!doctype html>
 <html lang="pt-BR">
 <head>
@@ -78,7 +79,9 @@ function cabecalho(string $titulo, array $op = []): void
     <?php render_links(links_conta(), $atual); render_sair(); ?>
   </nav>
   <div class="topo-acoes">
-    <a class="botao botao--roxo botao--topo" href="/jogo.php"><span class="ponto" aria-hidden="true"></span>Jogar</a>
+    <form class="busca-topo" method="get" action="/cientistas.php" role="search">
+      <input type="search" name="q" placeholder="Buscar no acervo" aria-label="Buscar no acervo" maxlength="80">
+    </form>
     <details class="menu">
       <summary class="vidro">Menu</summary>
       <nav class="menu-painel vidro" aria-label="Menu">
@@ -98,10 +101,12 @@ function rodape(): void
 <footer class="rodape">
   <p class="gigante" aria-hidden="true">Constelar<?= simbolo('u-estrela', 'gigante-estrela') ?></p>
   <div class="rodape-cols">
-    <p class="rodape-frase">Um jogo para dar visibilidade às mulheres que fazem a ciência brasileira. Em homenagem a Duília de Mello, a “Mulher das Estrelas”.</p>
+    <p class="rodape-frase">Acervo aberto e colaborativo de mulheres que fazem a ciência brasileira, com um jogo para explorá-lo. Em homenagem a Duília de Mello, a “Mulher das Estrelas”.</p>
     <nav aria-label="Rodapé">
-      <a href="/jogo.php">Jogar</a>
-      <a href="/cientistas.php">Álbum de estrelas</a>
+      <a href="/cientistas.php">Acervo</a>
+      <a href="/dados.php">Dados e exportação</a>
+      <a href="/jogo.php">Jogo: Observatório</a>
+      <a href="/cientistas.php?vista=album">Álbum de figurinhas</a>
       <a href="/cadastro-cientista.php">Indicar cientista</a>
       <a href="/sobre.php">Sobre o projeto</a>
       <a href="/privacidade.php">Privacidade e LGPD</a>

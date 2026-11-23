@@ -7,15 +7,17 @@ exigir_admin();
 $estados = ['pendente' => 'Pendentes', 'aprovado' => 'Publicadas', 'rejeitado' => 'Rejeitadas'];
 $filtro = isset($estados[$_GET['status'] ?? '']) ? $_GET['status'] : 'pendente';
 
+$busca = is_string($_GET['q'] ?? null) ? trim(mb_substr($_GET['q'], 0, 80)) : '';
 $st = db()->prepare(
     'SELECT c.*, a.nome AS area, a.constelacao, u.nome AS autor, u.email AS autor_email
      FROM cientistas c
      JOIN areas a ON a.id = c.area_id
      LEFT JOIN usuarios u ON u.id = c.enviado_por
-     WHERE c.status = ?
+     WHERE c.status = ? AND (? = \'\' OR c.nome LIKE ? OR u.email LIKE ?)
      ORDER BY c.criado_em DESC, c.id DESC'
 );
-$st->execute([$filtro]);
+$like = '%' . addcslashes($busca, '%_\\') . '%';
+$st->execute([$filtro, $busca, $like, $like]);
 $lista = $st->fetchAll();
 
 $contagem = db()->query('SELECT status, COUNT(*) FROM cientistas GROUP BY status')->fetchAll(PDO::FETCH_KEY_PAIR);
@@ -36,7 +38,12 @@ cabecalho('Painel de revisão', ['privado' => true]);
       <a href="?status=<?= $k ?>" <?= $k === $filtro ? 'aria-current="page"' : '' ?>><?= $rotulo ?> <span><?= (int) ($contagem[$k] ?? 0) ?></span></a>
     <?php endforeach; ?>
   </nav>
+  <form class="busca-admin" method="get" action="/admin/">
+    <input type="hidden" name="status" value="<?= e($filtro) ?>">
+    <input type="search" name="q" value="<?= e($busca) ?>" placeholder="Buscar por nome ou e-mail" aria-label="Buscar no painel">
+  </form>
   <a class="botao" href="/admin/areas.php">Constelações</a>
+  <a class="botao" href="/dados.php">Estatísticas</a>
 </div>
 
 <?php if ($aConfirmar && $filtro === 'aprovado'): ?>

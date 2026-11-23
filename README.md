@@ -1,6 +1,6 @@
 # Constelar
 
-Jogo web que dá visibilidade a mulheres cientistas brasileiras. Cada cientista é uma estrela; cada área do conhecimento, uma constelação. No começo o céu está apagado: é ouvindo a história de cada cientista que ele se acende. Projeto para a SNCT 2026, em homenagem a Duília de Mello, a "Mulher das Estrelas".
+Acervo pesquisável e colaborativo de mulheres cientistas brasileiras, apoiado em banco de dados MySQL: busca com filtros, temas, estatísticas, exportação (CSV/JSON), indicações revisadas pela administração e registro de autorização (LGPD). Como forma de explorar o acervo, há um jogo em que cada cientista é uma estrela e cada área do conhecimento, uma constelação. Projeto para a SNCT 2026, em homenagem a Duília de Mello, a "Mulher das Estrelas".
 
 PHP 8.3 (Apache) · MySQL 8.4 · Phaser 3.90 · tudo servido localmente (funciona sem internet depois de construído).
 
@@ -41,14 +41,16 @@ Na primeira subida o banco pode levar alguns minutos em disco lento; o Docker es
 
 | Endereço | Função |
 |---|---|
-| `/` | Apresentação do projeto. |
-| `/jogo.php` | O jogo: observatório, 6 constelações, guia (Lume), álbum, mapa, desafio de perguntas e certificado. |
-| `/cientistas.php` | Álbum completo, por constelação. |
-| `/cientista.php?id=N` | Página de uma cientista, com biografia, curiosidade e fontes. |
+| `/` | Início: busca no acervo, áreas, temas, entradas recentes e acesso ao jogo. |
+| `/cientistas.php` | Acervo: busca por texto, filtros por área e tema, ordenação, paginação; vistas em tabela, cartões ou álbum; exportação do resultado. |
+| `/cientista.php?id=N` | Ficha de uma cientista: biografia, curiosidade, temas e fontes. |
+| `/dados.php` | Painel de dados: indicadores, gráficos por área, tema e instituição, dados abertos e modelo do banco. |
+| `/exportar.php?formato=csv\|json` | Exporta o acervo (aceita os mesmos filtros do acervo: `q`, `area`, `tema`, `ordem`). |
+| `/jogo.php` | Modo jogo: observatório, constelações, guia (Lume), álbum, mapa, desafio e certificado. |
 | `/sobre.php`, `/privacidade.php` | O projeto, a equipe, as referências e o tratamento de dados (LGPD). |
 | `/registrar.php`, `/login.php`, `/conta.php` | Conta, minhas indicações e troca de senha. |
 | `/cadastro-cientista.php` | Indicar uma cientista (fica pendente até a revisão). |
-| `/admin/` | Painel: aprovar (com registro da autorização), rejeitar com recado, editar, despublicar, excluir. |
+| `/admin/` | Painel: busca, aprovar (com registro da autorização), rejeitar com recado, editar (inclusive temas), despublicar, excluir. |
 | `/admin/areas.php` | Criar e editar constelações (nome, cor, símbolo, ordem). |
 | `/api/cientistas.php` | Dados do jogo. Só devolve cientistas aprovadas e com autorização. |
 
@@ -70,14 +72,18 @@ tests/fumaca.sh            teste de fumaça por HTTP
 app/
   bin/migrar.php           aplica as migrações na subida do container
   bin/seed-admin.php       cria/atualiza o administrador do .env
-  db/migracoes/*.sql       esquema e acervo, em ordem numérica
-  src/                     banco, http, seguranca, arte (SVG), layout
+  db/migracoes/*.sql       esquema, acervo e temas, em ordem numérica
+  src/                     banco, acervo (busca/estatísticas), http, seguranca, arte (SVG), layout
   public/                  páginas, admin/, api/, assets/
     assets/js/jogo/        nucleo, audio, ui, mundo, main (módulos ES)
     assets/dados/figuras.json   desenho de cada constelação (site e jogo)
 ```
 
 Para mudar o banco, crie um novo arquivo em `app/db/migracoes/` com o próximo número; ele roda sozinho na próxima subida. Não edite migrações já aplicadas.
+
+## Banco de dados
+
+`areas` 1:N `cientistas` N:N `temas` (tabela `cientista_tema`); `usuarios` guarda quem indicou e quem revisou cada registro; `tentativas_login` limita abusos; `migracoes` controla as versões do esquema. A busca usa consultas preparadas com `LIKE` em nome, instituição, biografia e curiosidade.
 
 ## Segurança
 
