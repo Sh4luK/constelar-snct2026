@@ -1,0 +1,18 @@
+{
+  "_": "Fotos das cientistas do acervo inicial na Wikimedia Commons (licenças livres). O importador (bin/importar-fotos.php) baixa as que ainda faltam no banco, confere a licença e grava o crédito. foco = [x, y, lado] do recorte, opcional.",
+  "fotos": {
+    "Sonja Ashauer": {"arquivo": "Sonja_Ashauer.jpg"},
+    "Jaqueline Goes de Jesus": {"arquivo": "Jaqueline_Goes_-_Prêmio_Mulheres_na_Ciência.jpg"},
+    "Johanna Döbereiner": {"arquivo": "Johanna-Döbereiner.jpg"},
+    "Nise da Silveira": {"arquivo": "Nise_da_Silveira.tif"},
+    "Bertha Lutz": {"arquivo": "Bertha_Lutz_1925.jpg"},
+    "Vanderlan Bolzani": {"arquivo": "Vanderlan_da_Silva_Bolzani,_PGQu_da_UFRJ.jpg"},
+    "Yvonne Mascarenhas": {"arquivo": "Yvonne_Mascarenhas.jpg"},
+    "Niède Guidon": {"arquivo": "Niede_Guidon_e_o_deputado_Paes_Landim_cropped.jpg"},
+    "Lélia Gonzalez": {"arquivo": "Lélia_Gonzalez_by_Cezar_Loureiro.jpg"},
+    "Ruth Cardoso": {"arquivo": "Ruth_Cardoso_(cropped).JPG"},
+    "Maria Laura Mouzinho Leite Lopes": {"arquivo": "Maria_Laura_Moura_Mouzinho_Leite_Lopes.jpg"},
+    "Marília Chaves Peixoto": {"arquivo": "Marília_Chaves_Peixoto.jpg"},
+    "Carolina Araujo": {"arquivo": "Carolina_Araujo_ICM_2018_(43586926225).jpg"}
+  }
+}

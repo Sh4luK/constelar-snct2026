@@ -23,7 +23,11 @@ cabecalho($c['nome'], ['descricao' => primeira_frase($c['biografia'])]);
     <div class="perfil-figurinha">
       <span class="fig-num" aria-hidden="true"><?= sprintf('%02d', $c['numero']) ?></span>
       <?php if ($c['destaque']): ?><span class="fig-selo">Homenageada</span><?php endif; ?>
-      <span class="fig-arte"><?= simbolo('u-estrela', 'fig-brilho') ?><?= simbolo('s-ep-' . $c['variante'], 'fig-personagem') ?></span>
+      <?php if ($c['foto']): ?>
+        <span class="fig-arte fig-arte--foto"><?= retrato($c, 'fig-foto') ?></span>
+      <?php else: ?>
+        <span class="fig-arte"><?= simbolo('u-estrela', 'fig-brilho') ?><?= simbolo('s-ep-' . $c['variante'], 'fig-personagem') ?></span>
+      <?php endif; ?>
     </div>
     <div class="carta carta--mini">
       <?= figura_svg($c['icone'], count($vizinhas), 'carta-figura', $indiceNaArea === false ? null : (int) $indiceNaArea) ?>
@@ -51,7 +55,9 @@ cabecalho($c['nome'], ['descricao' => primeira_frase($c['biografia'])]);
       </aside>
     <?php endif; ?>
 
-    <p class="fontes"><strong>Fontes</strong> <?= e($c['fonte']) ?></p>
+    <p class="fontes"><strong>Fontes</strong> <?= e($c['fonte']) ?>
+      <?php if ($c['foto'] && $c['foto_credito']): ?><br><span class="credito-foto">Foto: <?php if ($c['foto_fonte'] && preg_match('#^https://#', $c['foto_fonte'])): ?><a href="<?= e($c['foto_fonte']) ?>" rel="noopener" target="_blank"><?= e($c['foto_credito']) ?></a><?php else: ?><?= e($c['foto_credito']) ?><?php endif; ?></span><?php endif; ?>
+    </p>
 
     <div class="grupo-botoes">
       <a class="botao botao--roxo" href="/cientistas.php?area=<?= $c['area_id'] ?>">Mais de <?= e($c['area']) ?> <?= simbolo('u-seta', 'ic') ?></a>

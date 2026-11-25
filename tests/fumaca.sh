@@ -31,6 +31,12 @@ case "$json" in *'"fonte"'*|*'"email"'*|*'autorizacao'*) falha "API expõe campo
 id=$(echo "$json" | grep -o '"id":[0-9]*,"numero"' | head -1 | grep -o '[0-9]*' | head -1)
 [ -n "$id" ] && espera "perfil de cientista publicada" 200 "$BASE/cientista.php?id=$id"
 
+echo "Fotos"
+foto=$(echo "$json" | grep -o '"foto":"[^"]*"' | head -1 | cut -d'"' -f4 | sed 's#\\/#/#g')
+if [ -n "$foto" ]; then espera "foto do acervo" 200 "$BASE$foto"; else falha "nenhuma foto no acervo"; fi
+c=$(codigo "$BASE/fotos/"); [ "$c" != 200 ] && ok "pasta de fotos não é listada ($c)" || falha "pasta de fotos listável"
+c=$(codigo "$BASE/fotos/teste.php"); [ "$c" != 200 ] && ok "fotos não executam código ($c)" || falha "PHP acessível em /fotos"
+
 echo "Proteções"
 espera "painel exige login" 303 "$BASE/admin/"
 espera "indicação exige login" 303 "$BASE/cadastro-cientista.php"

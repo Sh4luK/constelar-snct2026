@@ -4,3 +4,4 @@
 *.php text eol=lf
 docker/* text eol=lf
 *.woff2 binary
+*.jpg binary

@@ -81,9 +81,17 @@ app/
 
 Para mudar o banco, crie um novo arquivo em `app/db/migracoes/` com o próximo número; ele roda sozinho na próxima subida. Não edite migrações já aplicadas.
 
+## Fotos
+
+- **Filtro padronizado.** Toda foto aparece em duas cores, preto e a cor da área (azul na Astronomia, amarelo na Química…), com retícula de impressão. O filtro é aplicado na hora de exibir; a foto guardada é neutra, então mudar a cor ou a área de uma cientista muda a foto junto.
+- **Envio.** O formulário de indicação e a edição no painel aceitam JPG, PNG ou WEBP de até 5 MB, com crédito obrigatório, e mostram a prévia já com o filtro. O servidor redecodifica toda imagem com a biblioteca GD: sai sempre um JPEG quadrado de 640 px, sem metadados (inclusive localização de GPS) e sem nada além dos pixels. Cientista sem foto continua com a personagem ilustrada.
+- **Onde ficam.** No volume `fotos_data`, servidas em `/fotos/`, onde só arquivos `.jpg` gerados pelo sistema podem ser abertos e o PHP fica desligado. Para fazer cópia de segurança: `docker compose cp app:/var/www/dados/fotos ./copia-fotos`.
+- **Acervo inicial.** Seis fotos (Duília de Mello, Beatriz Barbuy, Thaisa Storchi Bergmann, Rosaly Lopes, Márcia Barbosa e Sonia Guimarães) já vêm no projeto, em `app/db/fotos/`. Outras 13 estão listadas em `app/db/fotos-acervo.json` e são baixadas da Wikimedia Commons, em segundo plano, na primeira vez que o site sobe com internet. Todas têm licença livre, que é conferida no download, e o crédito aparece na página da cientista. Para forçar uma nova tentativa: `docker compose exec app php bin/importar-fotos.php`.
+- **Sem foto livre encontrada:** Elisa Frota-Pessoa, Eloisa Mano, Blanka Wladislaw, Mayana Zatz, Carolina Bori e Enedina Alves Marques. Para essas, envie pelo painel (Editar → Foto) uma imagem com autorização de uso e o crédito.
+
 ## Banco de dados
 
-`areas` 1:N `cientistas` N:N `temas` (tabela `cientista_tema`); `usuarios` guarda quem indicou e quem revisou cada registro; `tentativas_login` limita abusos; `migracoes` controla as versões do esquema. A busca usa consultas preparadas com `LIKE` em nome, instituição, biografia e curiosidade.
+`areas` 1:N `cientistas` (com foto, crédito e fonte da foto) N:N `temas` (tabela `cientista_tema`); `usuarios` guarda quem indicou e quem revisou cada registro; `tentativas_login` limita abusos; `migracoes` controla as versões do esquema. A busca usa consultas preparadas com `LIKE` em nome, instituição, biografia e curiosidade.
 
 ## Segurança
 

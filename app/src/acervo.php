@@ -70,7 +70,7 @@ function buscar_cientistas(array $f, ?int $limite = POR_PAGINA): array
     $st->execute($params);
     $total = (int) $st->fetchColumn();
 
-    $sql = "SELECT c.id, c.nome, c.area_id, c.instituicao, c.biografia, c.curiosidade, c.fonte, c.destaque, c.criado_em,
+    $sql = "SELECT c.id, c.nome, c.area_id, c.instituicao, c.biografia, c.curiosidade, c.fonte, c.destaque, c.criado_em, c.foto, c.foto_credito,
                    a.nome AS area, a.constelacao, a.cor, a.icone
             FROM cientistas c JOIN areas a ON a.id = c.area_id
             WHERE {$sqlWhere}

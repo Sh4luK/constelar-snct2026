@@ -46,8 +46,11 @@ services:
       ADMIN_EMAIL: ${ADMIN_EMAIL:?defina ADMIN_EMAIL no .env}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:?defina ADMIN_PASSWORD no .env}
       CONTATO_EMAIL: ${CONTATO_EMAIL:-}
+    volumes:
+      - fotos_data:/var/www/dados/fotos
     ports:
       - "${APP_PORT:-8080}:80"
 
 volumes:
   db_data:
+  fotos_data:

@@ -41,8 +41,14 @@ switch ($acao) {
         break;
 
     case 'excluir':
+        $st = $pdo->prepare('SELECT foto FROM cientistas WHERE id = ?');
+        $st->execute([$id]);
+        $foto = $st->fetchColumn() ?: null;
         $st = $pdo->prepare('DELETE FROM cientistas WHERE id = ?');
         $st->execute([$id]);
+        if ($st->rowCount()) {
+            apagar_foto($foto);
+        }
         flash($st->rowCount() ? 'Registro excluído.' : 'Registro não encontrado.', $st->rowCount() ? 'ok' : 'erro');
         break;
 

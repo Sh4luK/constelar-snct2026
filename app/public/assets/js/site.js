@@ -39,6 +39,33 @@
       itens.forEach((el) => el.classList.add('visivel'));
     }
 
+    // Prévia da foto escolhida, já com o filtro da área selecionada no formulário.
+    d.querySelectorAll('input[type=file][data-foto]').forEach((campo) => {
+      const form = campo.form;
+      const previa = form && form.querySelector('[data-previa]');
+      const area = form && form.querySelector('select[name=area_id]');
+      if (!previa) return;
+      const pintar = () => {
+        previa.className = previa.className.replace(/\barea-\d+\b/g, '').trim() + (area && area.value ? ' area-' + area.value : '');
+      };
+      area && area.addEventListener('change', pintar);
+      pintar();
+      let url = null;
+      campo.addEventListener('change', () => {
+        const arq = campo.files && campo.files[0];
+        if (!arq || !/^image\/(jpeg|png|webp)$/.test(arq.type)) return;
+        if (url) URL.revokeObjectURL(url);
+        url = URL.createObjectURL(arq);
+        const moldura = d.createElement('span');
+        moldura.className = 'retrato';
+        const img = d.createElement('img');
+        img.alt = 'Prévia da foto';
+        img.src = url;
+        moldura.append(img);
+        previa.replaceChildren(moldura);
+      });
+    });
+
     // Contador de caracteres.
     d.querySelectorAll('textarea[data-contador]').forEach((ta) => {
       const max = ta.maxLength;

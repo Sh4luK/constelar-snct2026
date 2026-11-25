@@ -29,6 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'fonte'                => texto_post('fonte', 500),
         'autorizacao_registro' => texto_post('autorizacao_registro', 300),
         'destaque'             => ($_POST['destaque'] ?? '') === '1' ? 1 : 0,
+        'foto_credito'         => texto_post('foto_credito', 300),
+        'foto_fonte'           => texto_post('foto_fonte', 300),
     ]);
 
     if (mb_strlen($c['nome']) < 3) {
@@ -47,15 +49,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $erros[] = 'Uma cientista publicada precisa do registro da autorização.';
     }
 
+    $fotoAntiga = $c['foto'];
+    if (!$erros) {
+        try {
+            if ($nova = receber_foto('foto')) {
+                $c['foto'] = $nova;
+            } elseif (($_POST['remover_foto'] ?? '') === '1') {
+                $c['foto'] = null;
+            }
+        } catch (InvalidArgumentException $ex) {
+            $erros[] = $ex->getMessage();
+        }
+        if (!$erros && $c['foto'] && mb_strlen($c['foto_credito']) < 3) {
+            $erros[] = 'Informe o crédito da foto.';
+        }
+        if ($erros && $c['foto'] !== $fotoAntiga) {
+            apagar_foto($c['foto']);
+            $c['foto'] = $fotoAntiga;
+        }
+    }
+    if ($c['foto_fonte'] !== '' && !preg_match('#^https://#', $c['foto_fonte'])) {
+        $erros[] = 'O link da fonte da foto deve começar com https://';
+    }
+
     if (!$erros) {
         db()->prepare(
             "UPDATE cientistas SET nome = ?, area_id = ?, instituicao = NULLIF(?, ''), biografia = ?, curiosidade = NULLIF(?, ''),
-                    fonte = ?, autorizacao_registro = NULLIF(?, ''), destaque = ?, revisado_por = ?, revisado_em = NOW()
+                    fonte = ?, autorizacao_registro = NULLIF(?, ''), destaque = ?, foto = ?, foto_credito = NULLIF(?, ''),
+                    foto_fonte = NULLIF(?, ''), revisado_por = ?, revisado_em = NOW()
              WHERE id = ?"
         )->execute([
             $c['nome'], $c['area_id'], $c['instituicao'], $c['biografia'], $c['curiosidade'],
-            $c['fonte'], $c['autorizacao_registro'], $c['destaque'], $admin['id'], $id,
+            $c['fonte'], $c['autorizacao_registro'], $c['destaque'], $c['foto'], $c['foto'] ? $c['foto_credito'] : '',
+            $c['foto'] ? $c['foto_fonte'] : '', $admin['id'], $id,
         ]);
+        if ($fotoAntiga && $fotoAntiga !== $c['foto']) {
+            apagar_foto($fotoAntiga);
+        }
         $temasMarcados = array_map('intval', (array) ($_POST['temas'] ?? []));
         salvar_temas($id, array_intersect($temasMarcados, array_column($temas, 'id')), texto_post('temas_novos', 300));
         flash('Alterações salvas.');
@@ -71,7 +101,7 @@ cabecalho('Editar cientista', ['privado' => true]);
 </header>
 
 <?php lista_erros($erros); ?>
-<form class="formulario formulario--largo" method="post" action="/admin/editar.php">
+<form class="formulario formulario--largo" method="post" action="/admin/editar.php" enctype="multipart/form-data">
   <?= csrf_campo() ?>
   <input type="hidden" name="id" value="<?= (int) $id ?>">
   <label class="campo">Nome
@@ -107,6 +137,22 @@ cabecalho('Editar cientista', ['privado' => true]);
   <label class="campo">Fontes
     <input name="fonte" required maxlength="500" value="<?= e($c['fonte']) ?>">
   </label>
+  <fieldset class="campo campo-foto">
+    <legend>Foto</legend>
+    <div class="foto-envio">
+      <span class="foto-previa area-<?= (int) $c['area_id'] ?>" data-previa><?= $c['foto'] ? retrato($c) : simbolo('s-ep-' . variante_personagem((int) $c['id']), 'retrato-personagem') ?></span>
+      <div class="foto-envio-campos">
+        <input type="file" name="foto" accept="image/jpeg,image/png,image/webp" data-foto aria-label="Enviar nova foto">
+        <?php if ($c['foto']): ?><label class="check"><input type="checkbox" name="remover_foto" value="1"><span>Remover a foto (volta a personagem ilustrada)</span></label><?php endif; ?>
+        <label class="campo">Crédito da foto
+          <input name="foto_credito" maxlength="300" value="<?= e((string) $c['foto_credito']) ?>" placeholder="Autor · licença · onde foi publicada">
+        </label>
+        <label class="campo">Link da fonte da foto <span class="campo-ajuda">opcional</span>
+          <input type="url" name="foto_fonte" maxlength="300" value="<?= e((string) $c['foto_fonte']) ?>" placeholder="https://">
+        </label>
+      </div>
+    </div>
+  </fieldset>
   <label class="campo">Registro da autorização (LGPD) <span class="campo-ajuda">como e quando a cientista autorizou; ou “pessoa falecida, dados públicos”</span>
     <input name="autorizacao_registro" maxlength="300" value="<?= e((string) $c['autorizacao_registro']) ?>">
   </label>

@@ -393,7 +393,7 @@ export class Mundo extends Phaser.Scene {
     this.ocupado = true;
     await this.ui.dialogo({
       titulo: c.nome, sub: [area.constelacao, c.instituicao].filter(Boolean).join(' · '), cor: area.cor,
-      retrato: { variante: c.variante, apagada: !acesa }, paginas,
+      retrato: { variante: c.variante, apagada: !acesa, foto: c.foto }, paginas,
     });
     this.ocupado = false;
     if (!acesa) this.acender(npc);

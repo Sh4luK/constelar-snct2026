@@ -11,7 +11,7 @@ $areas = array_map(fn ($a) => [
 $cientistas = array_map(fn ($c) => [
     'id' => $c['id'], 'numero' => $c['numero'], 'nome' => $c['nome'], 'area_id' => $c['area_id'],
     'instituicao' => $c['instituicao'], 'biografia' => $c['biografia'], 'curiosidade' => $c['curiosidade'],
-    'destaque' => $c['destaque'], 'variante' => $c['variante'],
+    'destaque' => $c['destaque'], 'variante' => $c['variante'], 'foto' => url_foto($c['foto']),
 ], cientistas_publicadas());
 
 $json = json_encode(['areas' => $areas, 'cientistas' => $cientistas], JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);

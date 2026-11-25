@@ -63,12 +63,13 @@ cabecalho('Painel de revisão', ['privado' => true]);
       <span class="miudo">enviada em <?= e(date('d/m/Y H:i', strtotime($c['criado_em']))) ?><?= $c['autor'] ? ' por ' . e($c['autor']) . ' (' . e($c['autor_email']) . ')' : ' (acervo inicial)' ?></span>
       <?php if ($semAutorizacao): ?><span class="status status--pendente">Autorização a confirmar</span><?php endif; ?>
     </header>
-    <h2 class="revisao-nome"><?= e($c['nome']) ?></h2>
+    <div class="revisao-pessoa"><?= retrato($c, 'revisao-retrato') ?><h2 class="revisao-nome"><?= e($c['nome']) ?></h2></div>
     <?php if ($c['instituicao']): ?><p class="perfil-inst"><?= e($c['instituicao']) ?></p><?php endif; ?>
     <p><?= e($c['biografia']) ?></p>
     <dl class="revisao-dados">
       <?php if ($c['curiosidade']): ?><dt>Curiosidade</dt><dd><?= e($c['curiosidade']) ?></dd><?php endif; ?>
       <dt>Fontes</dt><dd><?= e($c['fonte']) ?></dd>
+      <?php if ($c['foto']): ?><dt>Crédito da foto</dt><dd><?= e((string) $c['foto_credito']) ?></dd><?php endif; ?>
       <dt>Autorização (LGPD)</dt>
       <dd><?= $c['autorizacao_registro'] ? e($c['autorizacao_registro']) : ($c['autorizacao_uso'] ? 'Declarada por quem indicou; ainda sem registro da administração.' : 'Não declarada.') ?></dd>
       <?php if ($c['nota_revisao']): ?><dt>Recado da revisão</dt><dd><?= e($c['nota_revisao']) ?></dd><?php endif; ?>

@@ -120,7 +120,10 @@ export function criarUI(ctx) {
         const r = cfg.retrato || { lume: true };
         d.retrato.style.setProperty('--cor', r.lume ? '#6a2cff' : (r.apagada ? '#5a4c9c' : cfg.cor));
         d.retrato.classList.toggle('apagada', !!r.apagada);
-        d.retrato.replaceChildren(usar(r.lume ? 's-lume' : 's-ep-' + (r.apagada ? 0 : r.variante), r.lume ? 'lume' : ''));
+        d.retrato.classList.toggle('com-foto', !!r.foto);
+        d.retrato.replaceChildren(r.foto
+          ? el('span', { class: 'retrato' }, el('img', { src: r.foto, alt: '' }))
+          : usar(r.lume ? 's-lume' : 's-ep-' + (r.apagada ? 0 : r.variante), r.lume ? 'lume' : ''));
         d.dlg.hidden = false;
         som.tocar('abrir');
         ui.esconderDica();
@@ -216,7 +219,9 @@ export function criarUI(ctx) {
           }
           return el('button', { class: 'figurinha', type: 'button', cor: a.cor, onclick: () => ui.ficha(e) },
             el('span', { class: 'fig-num' }, num),
-            el('span', { class: 'fig-arte' }, usar('u-estrela', 'fig-brilho'), usar('s-ep-' + e.c.variante, 'fig-personagem')),
+            e.c.foto
+              ? el('span', { class: 'fig-arte fig-arte--foto' }, el('span', { class: 'retrato fig-foto' }, el('img', { src: e.c.foto, alt: '' })))
+              : el('span', { class: 'fig-arte' }, usar('u-estrela', 'fig-brilho'), usar('s-ep-' + e.c.variante, 'fig-personagem')),
             el('span', { class: 'fig-texto' }, el('strong', { class: 'fig-nome' }, e.c.nome)));
         }))));
       const medalha = estado.quizMelhor ? el('p', { class: 'mapa-legenda' }, `Melhor resultado no Desafio da Lume: ${estado.quizMelhor}/5`) : null;

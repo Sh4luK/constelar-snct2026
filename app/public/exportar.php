@@ -18,6 +18,8 @@ $linhas = array_map(fn ($c) => [
     'biografia'   => $c['biografia'],
     'curiosidade' => (string) $c['curiosidade'],
     'fontes'      => $c['fonte'],
+    'foto'        => url_foto($c['foto']) ?? '',
+    'foto_credito'=> (string) $c['foto_credito'],
     'pagina'      => 'cientista.php?id=' . $c['id'],
 ], $r['itens']);
 
@@ -35,7 +37,7 @@ header('Content-Type: text/csv; charset=utf-8');
 header('Content-Disposition: attachment; filename="' . $arquivo . '.csv"');
 $out = fopen('php://output', 'w');
 fwrite($out, "\xEF\xBB\xBF");
-fputcsv($out, ['Nº', 'Nome', 'Área', 'Constelação', 'Instituição', 'Temas', 'Biografia', 'Curiosidade', 'Fontes', 'Página'], ';', '"', '');
+fputcsv($out, ['Nº', 'Nome', 'Área', 'Constelação', 'Instituição', 'Temas', 'Biografia', 'Curiosidade', 'Fontes', 'Foto', 'Crédito da foto', 'Página'], ';', '"', '');
 foreach ($linhas as $l) {
     // Evita que o Excel interprete um campo como fórmula.
     $l = array_map(fn ($v) => is_string($v) && preg_match('/^[=+\-@\t\r]/', $v) ? "'" . $v : $v, $l);

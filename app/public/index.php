@@ -89,7 +89,7 @@ cabecalho('Acervo de mulheres cientistas brasileiras');
   <div class="cartoes-acervo">
     <?php foreach ($recentes as $c): ?>
       <article class="cartao ficha-acervo area-<?= $c['area_id'] ?>">
-        <span class="ficha-arte"><?= simbolo('s-ep-' . $c['variante'], 'ficha-personagem') ?></span>
+        <?= retrato($c, 'ficha-arte') ?>
         <div>
           <p class="miudo"><?= e($c['area']) ?></p>
           <h3 class="ficha-nome"><a href="/cientista.php?id=<?= $c['id'] ?>"><?= e($c['nome']) ?></a></h3>

@@ -1,5 +1,12 @@
 FROM php:8.3-apache
 
+# GD (redimensionar e limpar fotos enviadas) e EXIF (corrigir a rotação de fotos de celular).
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends libjpeg62-turbo-dev libpng-dev libwebp-dev \
+ && docker-php-ext-configure gd --with-jpeg --with-webp \
+ && docker-php-ext-install gd exif \
+ && rm -rf /var/lib/apt/lists/*
+
 RUN docker-php-ext-install pdo_mysql opcache \
  && a2enmod headers expires \
  && mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"

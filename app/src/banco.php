@@ -75,7 +75,7 @@ function cientistas_publicadas(): array
     static $cache = null;
     if ($cache === null) {
         $cache = db()->query(
-            'SELECT c.id, c.nome, c.area_id, c.instituicao, c.biografia, c.curiosidade, c.fonte, c.destaque,
+            'SELECT c.id, c.nome, c.area_id, c.instituicao, c.biografia, c.curiosidade, c.fonte, c.destaque, c.foto, c.foto_credito, c.foto_fonte,
                     a.nome AS area, a.constelacao, a.cor, a.icone
              FROM cientistas c
              JOIN areas a ON a.id = c.area_id

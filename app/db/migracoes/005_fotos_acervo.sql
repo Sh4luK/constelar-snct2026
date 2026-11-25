@@ -1,0 +1,8 @@
+-- Fotos do acervo inicial já incluídas no projeto (app/db/fotos/), todas da Wikimedia Commons com licença livre.
+
+UPDATE cientistas SET foto = 'duilia-de-mello.jpg', foto_credito = 'Joao Pedro de Mello Domingues · CC BY-SA 4.0 · Wikimedia Commons', foto_fonte = 'https://commons.wikimedia.org/wiki/File:Duilia_deMello_Profile.jpg' WHERE nome = 'Duília de Mello' AND foto IS NULL;
+UPDATE cientistas SET foto = 'beatriz-barbuy.jpg', foto_credito = 'Micheline Pelletier/Fondation L''Oréal · CC BY 4.0 · Wikimedia Commons', foto_fonte = 'https://commons.wikimedia.org/wiki/File:Professor_Beatriz_Barbuy_(iau0907a).jpg' WHERE nome = 'Beatriz Barbuy' AND foto IS NULL;
+UPDATE cientistas SET foto = 'thaisa-storchi-bergmann.jpg', foto_credito = 'Agência Brasil · CC BY 3.0 · Wikimedia Commons', foto_fonte = 'https://commons.wikimedia.org/wiki/File:(1)_Thaisa_Storchi_Bergmann_-_Agência_Brasil.png' WHERE nome = 'Thaisa Storchi Bergmann' AND foto IS NULL;
+UPDATE cientistas SET foto = 'rosaly-lopes.jpg', foto_credito = 'Jani Radebaugh · CC BY-SA 4.0 · Wikimedia Commons', foto_fonte = 'https://commons.wikimedia.org/wiki/File:Rosaly_Lopes1.jpg' WHERE nome = 'Rosaly Lopes' AND foto IS NULL;
+UPDATE cientistas SET foto = 'marcia-barbosa.jpg', foto_credito = 'Alexandre Bernardes Barbosa · CC BY-SA 4.0 · Wikimedia Commons', foto_fonte = 'https://commons.wikimedia.org/wiki/File:M%C3%A1rcia_Barbosa.jpg' WHERE nome = 'Márcia Barbosa' AND foto IS NULL;
+UPDATE cientistas SET foto = 'sonia-guimaraes.jpg', foto_credito = 'BrunoGuedes1 · CC BY 4.0 · Wikimedia Commons', foto_fonte = 'https://commons.wikimedia.org/wiki/File:Sonia_Guimaraes_2025_2_(cropped).jpg' WHERE nome = 'Sonia Guimarães' AND foto IS NULL;

@@ -19,6 +19,7 @@ require __DIR__ . '/http.php';
 require __DIR__ . '/seguranca.php';
 require __DIR__ . '/arte.php';
 require __DIR__ . '/acervo.php';
+require __DIR__ . '/fotos.php';
 require __DIR__ . '/layout.php';
 
 set_exception_handler('tratar_erro_fatal');

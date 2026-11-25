@@ -136,7 +136,7 @@ cabecalho('Acervo', ['descricao' => 'Busque mulheres cientistas brasileiras por 
           <tr class="area-<?= $c['area_id'] ?>">
             <td class="tabela-num"><?= sprintf('%02d', $c['numero']) ?></td>
             <td class="tabela-nome">
-              <a href="/cientista.php?id=<?= $c['id'] ?>"><?= e($c['nome']) ?></a>
+              <span class="tabela-pessoa"><?= retrato($c, 'retrato--mini') ?><a href="/cientista.php?id=<?= $c['id'] ?>"><?= e($c['nome']) ?></a></span>
               <span class="tabela-resumo"><?= e(primeira_frase($c['biografia'], 110)) ?></span>
               <span class="tabela-meta"><?= e($c['area']) ?><?= $c['instituicao'] ? ' · ' . e($c['instituicao']) : '' ?></span>
             </td>
@@ -155,7 +155,7 @@ cabecalho('Acervo', ['descricao' => 'Busque mulheres cientistas brasileiras por 
   <div class="cartoes-acervo">
     <?php foreach ($r['itens'] as $c): ?>
       <article class="cartao ficha-acervo area-<?= $c['area_id'] ?>">
-        <span class="ficha-arte"><?= simbolo('s-ep-' . $c['variante'], 'ficha-personagem') ?></span>
+        <?= retrato($c, 'ficha-arte') ?>
         <div>
           <p class="miudo">Nº <?= sprintf('%02d', $c['numero']) ?> · <?= e($c['area']) ?></p>
           <h2 class="ficha-nome"><a href="/cientista.php?id=<?= $c['id'] ?>"><?= e($c['nome']) ?></a></h2>

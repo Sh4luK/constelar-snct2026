@@ -86,7 +86,9 @@ function figurinha(array $c, string $classeExtra = ''): string
     if (!empty($c['destaque'])) {
         $o .= '<span class="fig-selo">Homenageada</span>';
     }
-    $o .= '<span class="fig-arte">' . simbolo('u-estrela', 'fig-brilho') . simbolo('s-ep-' . (int) $c['variante'], 'fig-personagem') . '</span>';
+    $o .= empty($c['foto'])
+        ? '<span class="fig-arte">' . simbolo('u-estrela', 'fig-brilho') . simbolo('s-ep-' . (int) $c['variante'], 'fig-personagem') . '</span>'
+        : '<span class="fig-arte fig-arte--foto">' . retrato($c, 'fig-foto') . '</span>';
     $o .= '<span class="fig-texto"><strong class="fig-nome">' . e($c['nome']) . '</strong>';
     $o .= '<span class="fig-area">' . e($c['area']) . '</span></span>';
     return $o . '</a>';

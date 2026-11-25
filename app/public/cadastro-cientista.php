@@ -10,7 +10,7 @@ $idsAreas = array_column($areas, 'id');
 $temas = temas();
 $temasMarcados = array_map('intval', (array) ($_POST['temas'] ?? []));
 $erros = [];
-$d = ['nome' => '', 'area_id' => 0, 'instituicao' => '', 'biografia' => '', 'curiosidade' => '', 'fonte' => ''];
+$d = ['nome' => '', 'area_id' => 0, 'instituicao' => '', 'biografia' => '', 'curiosidade' => '', 'fonte' => '', 'foto_credito' => ''];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exigir_post_com_csrf();
@@ -21,6 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'biografia'   => texto_post('biografia', 2000),
         'curiosidade' => texto_post('curiosidade', 500),
         'fonte'       => texto_post('fonte', 500),
+        'foto_credito' => texto_post('foto_credito', 300),
     ];
 
     if (mb_strlen($d['nome']) < 3) {
@@ -46,11 +47,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    $foto = null;
+    if (!$erros) {
+        try {
+            $foto = receber_foto('foto');
+            if ($foto && mb_strlen($d['foto_credito']) < 3) {
+                apagar_foto($foto);
+                $foto = null;
+                $erros[] = 'Informe o crédito da foto (quem fez e onde foi publicada).';
+            }
+        } catch (InvalidArgumentException $ex) {
+            $erros[] = $ex->getMessage();
+        }
+    }
+
     if (!$erros) {
         db()->prepare(
-            "INSERT INTO cientistas (nome, area_id, instituicao, biografia, curiosidade, fonte, autorizacao_uso, status, enviado_por)
-             VALUES (?, ?, NULLIF(?, ''), ?, NULLIF(?, ''), ?, 1, 'pendente', ?)"
-        )->execute([$d['nome'], $d['area_id'], $d['instituicao'], $d['biografia'], $d['curiosidade'], $d['fonte'], $u['id']]);
+            "INSERT INTO cientistas (nome, area_id, instituicao, biografia, curiosidade, fonte, foto, foto_credito, autorizacao_uso, status, enviado_por)
+             VALUES (?, ?, NULLIF(?, ''), ?, NULLIF(?, ''), ?, ?, ?, 1, 'pendente', ?)"
+        )->execute([$d['nome'], $d['area_id'], $d['instituicao'], $d['biografia'], $d['curiosidade'], $d['fonte'],
+            $foto, $foto ? $d['foto_credito'] : null, $u['id']]);
         $idsValidos = array_column($temas, 'id');
         salvar_temas((int) db()->lastInsertId(), array_intersect($temasMarcados, $idsValidos), '');
         flash('Indicação enviada! Ela aparece no álbum e no jogo depois da revisão da administração.');
@@ -69,7 +85,7 @@ cabecalho('Indicar cientista', ['privado' => true]);
 <div class="form-duas">
   <div>
     <?php lista_erros($erros); ?>
-    <form class="formulario" method="post" action="/cadastro-cientista.php">
+    <form class="formulario" method="post" action="/cadastro-cientista.php" enctype="multipart/form-data">
       <?= csrf_campo() ?>
       <label class="campo">Nome da cientista
         <input name="nome" required maxlength="150" value="<?= e($d['nome']) ?>">
@@ -99,11 +115,24 @@ cabecalho('Indicar cientista', ['privado' => true]);
           <?php endforeach; ?>
         </div>
       </fieldset>
+      <fieldset class="campo campo-foto">
+        <legend>Foto <span class="campo-ajuda">opcional; JPG, PNG ou WEBP até 5 MB</span></legend>
+        <div class="foto-envio">
+          <span class="foto-previa area-0" data-previa><?= simbolo('s-ep-1', 'retrato-personagem') ?></span>
+          <div class="foto-envio-campos">
+            <input type="file" name="foto" accept="image/jpeg,image/png,image/webp" data-foto>
+            <p class="campo-ajuda">A foto ganha automaticamente o filtro de cor da área escolhida. Prefira retratos de rosto, de frente.</p>
+            <label class="campo">Crédito da foto <span class="campo-ajuda">quem fez e onde foi publicada</span>
+              <input name="foto_credito" maxlength="300" value="<?= e($d['foto_credito']) ?>" placeholder="Ex.: Fulana de Tal / Agência Brasil (CC BY 3.0)">
+            </label>
+          </div>
+        </div>
+      </fieldset>
       <label class="campo">Fontes <span class="campo-ajuda">sites, artigos, entrevistas</span>
         <input name="fonte" required maxlength="500" value="<?= e($d['fonte']) ?>">
       </label>
       <label class="check"><input type="checkbox" name="autorizacao" value="1" required>
-        <span>Declaro que a cientista autorizou o uso destas informações neste projeto, ou que se trata de pessoa falecida com dados públicos (LGPD, Lei nº 13.709/2018).</span></label>
+        <span>Declaro que a cientista autorizou o uso destas informações (e da foto, se enviada) neste projeto, ou que se trata de pessoa falecida com dados públicos (LGPD, Lei nº 13.709/2018).</span></label>
       <button class="botao botao--roxo botao--grande">Enviar para revisão</button>
     </form>
   </div>
