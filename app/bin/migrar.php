@@ -79,8 +79,9 @@ for ($tentativa = 1; ; $tentativa++) {
             fwrite(STDERR, "[constelar] Banco indisponível: {$e->getMessage()}\n");
             exit(1);
         }
-        if ($tentativa === 1) {
-            log_migracao('Aguardando o banco de dados…');
+        if ($tentativa === 1 || $tentativa % 10 === 0) {
+            $alvo = (getenv('DB_HOST') ?: getenv('MYSQLHOST') ?: 'db') . ':' . (getenv('DB_PORT') ?: getenv('MYSQLPORT') ?: '3306');
+            log_migracao("Aguardando o banco de dados em {$alvo}… ({$e->getMessage()})");
         }
         sleep(2);
     }
