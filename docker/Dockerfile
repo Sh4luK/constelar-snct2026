@@ -23,7 +23,7 @@ RUN chmod +x /usr/local/bin/constelar-entrypoint \
  && chmod -R a+rX,go-w /var/www/app
 
 HEALTHCHECK --interval=10s --timeout=4s --start-period=120s --retries=3 \
-  CMD curl -fsS http://127.0.0.1/saude.php >/dev/null || exit 1
+  CMD curl -fsS "http://127.0.0.1:${PORT:-80}/saude.php" >/dev/null || exit 1
 
 ENTRYPOINT ["constelar-entrypoint"]
 CMD ["apache2-foreground"]

@@ -36,6 +36,32 @@ cloudflared tunnel --url http://localhost:8080
 
 O comando mostra um endereço `https://….trycloudflare.com`: é esse que se envia. Cada vez que o túnel é reiniciado o endereço muda. Antes de publicar, troque `ADMIN_PASSWORD` no `.env` por uma senha forte e rode `docker compose up -d`.
 
+### Deixar no ar o tempo todo (Railway)
+
+O projeto já vem preparado para o [Railway](https://railway.com) (`railway.json`). O nome dos menus pode variar um pouco no site deles.
+
+1. Entre em railway.com com a conta do GitHub.
+2. **New Project → Deploy from GitHub repo →** `Sh4luK/constelar-snct2026`. Se o código não estiver no branch principal, abra o serviço criado, vá em **Settings → Source** e escolha o branch do projeto.
+3. No mesmo projeto: **+ New → Database → MySQL**.
+4. No serviço do site, aba **Variables**, crie (os valores com `${{…}}` são copiados do MySQL pelo próprio Railway):
+
+   | Variável | Valor |
+   |---|---|
+   | `MYSQLHOST` | `${{MySQL.MYSQLHOST}}` |
+   | `MYSQLPORT` | `${{MySQL.MYSQLPORT}}` |
+   | `MYSQLUSER` | `${{MySQL.MYSQLUSER}}` |
+   | `MYSQLPASSWORD` | `${{MySQL.MYSQLPASSWORD}}` |
+   | `MYSQLDATABASE` | `${{MySQL.MYSQLDATABASE}}` |
+   | `ADMIN_EMAIL` | o e-mail do administrador |
+   | `ADMIN_PASSWORD` | uma senha forte (10+ caracteres) |
+   | `CONFIAR_PROXY` | `1` |
+
+5. Ainda no serviço do site: **Settings → Volumes → Add Volume**, com caminho `/var/www/dados/fotos` (guarda as fotos entre atualizações).
+6. **Settings → Networking → Generate Domain.** Se pedir uma porta, use a que o Railway sugerir (o site se ajusta à variável `PORT`).
+7. Aguarde o deploy terminar (a primeira vez leva alguns minutos) e abra o endereço `https://….up.railway.app`.
+
+A cada `git push` no branch escolhido, o Railway publica a nova versão sozinho. O banco e as fotos continuam. O plano de teste do Railway tem crédito limitado: quando acaba, o site sai do ar até que se escolha um plano pago.
+
 ### Se o banco não subir
 
 Em computadores antigos, o container `db` fica "unhealthy" e o log mostra `Fatal glibc error: CPU does not support x86-64-v2`: o processador não tem as instruções que a imagem `mysql:8.4` exige. Nesse caso, defina no `.env`:

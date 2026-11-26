@@ -118,13 +118,14 @@ function exigir_admin(): array
 /**
  * IP de quem acessa. Atrás de um túnel ou proxy (Cloudflare, Railway…) todas as requisições
  * chegam do mesmo endereço interno; nesse caso usa o IP real informado pelo proxy.
- * Só confia nesses cabeçalhos quando a conexão vem de rede privada/local.
+ * Só confia nesses cabeçalhos quando a conexão vem de rede privada/local, ou com CONFIAR_PROXY=1
+ * (plataformas em que todo acesso passa pelo proxy delas, como o Railway).
  */
 function ip_cliente(): string
 {
     $remoto = (string) ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0');
     $publico = filter_var($remoto, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
-    if ($publico === false) {
+    if ($publico === false || getenv('CONFIAR_PROXY') === '1') {
         $encaminhado = $_SERVER['HTTP_CF_CONNECTING_IP'] ?? explode(',', (string) ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? ''))[0];
         $encaminhado = trim((string) $encaminhado);
         if (filter_var($encaminhado, FILTER_VALIDATE_IP)) {

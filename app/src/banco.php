@@ -6,12 +6,15 @@ function db(): PDO
 {
     static $pdo = null;
     if ($pdo === null) {
+        // Docker Compose usa DB_*; no Railway, o MySQL fornece MYSQL* (usados se DB_* faltar).
+        $v = fn (string $a, string $b, string $padrao = '') => (string) (getenv($a) ?: getenv($b) ?: $padrao);
         $dsn = sprintf(
-            'mysql:host=%s;dbname=%s;charset=utf8mb4',
-            getenv('DB_HOST') ?: 'db',
-            getenv('DB_NAME') ?: 'constelar'
+            'mysql:host=%s;port=%d;dbname=%s;charset=utf8mb4',
+            $v('DB_HOST', 'MYSQLHOST', 'db'),
+            (int) $v('DB_PORT', 'MYSQLPORT', '3306'),
+            $v('DB_NAME', 'MYSQLDATABASE', 'constelar')
         );
-        $pdo = new PDO($dsn, (string) getenv('DB_USER'), (string) getenv('DB_PASSWORD'), [
+        $pdo = new PDO($dsn, $v('DB_USER', 'MYSQLUSER'), $v('DB_PASSWORD', 'MYSQLPASSWORD'), [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES   => false,
