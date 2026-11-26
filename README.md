@@ -25,6 +25,17 @@ Sem o script: `cp .env.example .env`, troque as senhas e rode `docker compose up
 
 Abra `http://localhost:8080/jogo.php?feira=1` nos computadores do estande: depois de 2 minutos sem uso o jogo recomeça sozinho para o próximo visitante, e o botão de sair para o site some. No menu do jogo há tela cheia, som e "Novo jogo".
 
+### Publicar na internet (para outra pessoa acessar)
+
+Com o site rodando no seu computador, um túnel da Cloudflare cria um endereço público com HTTPS, sem conta e sem abrir portas no roteador. O endereço vale enquanto o computador e o túnel estiverem ligados.
+
+```powershell
+winget install --id Cloudflare.cloudflared     # uma vez (Windows)
+cloudflared tunnel --url http://localhost:8080
+```
+
+O comando mostra um endereço `https://….trycloudflare.com`: é esse que se envia. Cada vez que o túnel é reiniciado o endereço muda. Antes de publicar, troque `ADMIN_PASSWORD` no `.env` por uma senha forte e rode `docker compose up -d`.
+
 ### Se o banco não subir
 
 Em computadores antigos, o container `db` fica "unhealthy" e o log mostra `Fatal glibc error: CPU does not support x86-64-v2`: o processador não tem as instruções que a imagem `mysql:8.4` exige. Nesse caso, defina no `.env`:

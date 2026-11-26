@@ -115,9 +115,28 @@ function exigir_admin(): array
 
 /* ---------------------------------------------------------------- Limite de tentativas por IP */
 
+/**
+ * IP de quem acessa. Atrás de um túnel ou proxy (Cloudflare, Railway…) todas as requisições
+ * chegam do mesmo endereço interno; nesse caso usa o IP real informado pelo proxy.
+ * Só confia nesses cabeçalhos quando a conexão vem de rede privada/local.
+ */
+function ip_cliente(): string
+{
+    $remoto = (string) ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0');
+    $publico = filter_var($remoto, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
+    if ($publico === false) {
+        $encaminhado = $_SERVER['HTTP_CF_CONNECTING_IP'] ?? explode(',', (string) ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? ''))[0];
+        $encaminhado = trim((string) $encaminhado);
+        if (filter_var($encaminhado, FILTER_VALIDATE_IP)) {
+            return $encaminhado;
+        }
+    }
+    return $remoto;
+}
+
 function ip_binario(): string
 {
-    return inet_pton((string) ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0')) ?: "\0\0\0\0";
+    return inet_pton(ip_cliente()) ?: "\0\0\0\0";
 }
 
 function limite_excedido(string $acao, int $max, int $minutos): bool
