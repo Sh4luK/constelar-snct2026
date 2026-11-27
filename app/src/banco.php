@@ -7,7 +7,15 @@ function db(): PDO
     static $pdo = null;
     if ($pdo === null) {
         // Docker Compose usa DB_*; no Railway, o MySQL fornece MYSQL* (usados se DB_* faltar).
-        $v = fn (string $a, string $b, string $padrao = '') => (string) (getenv($a) ?: getenv($b) ?: $padrao);
+        // Também aceita um endereço completo: MYSQL_URL / DATABASE_URL = mysql://usuario:senha@host:porta/banco
+        $url = parse_url((string) (getenv('MYSQL_URL') ?: getenv('DATABASE_URL') ?: '')) ?: [];
+        $daUrl = [
+            'MYSQLHOST' => $url['host'] ?? null, 'MYSQLPORT' => $url['port'] ?? null,
+            'MYSQLUSER' => isset($url['user']) ? rawurldecode($url['user']) : null,
+            'MYSQLPASSWORD' => isset($url['pass']) ? rawurldecode($url['pass']) : null,
+            'MYSQLDATABASE' => isset($url['path']) ? ltrim($url['path'], '/') : null,
+        ];
+        $v = fn (string $a, string $b, string $padrao = '') => (string) (getenv($a) ?: getenv($b) ?: ($daUrl[$b] ?? null) ?: $padrao);
         $dsn = sprintf(
             'mysql:host=%s;port=%d;dbname=%s;charset=utf8mb4',
             $v('DB_HOST', 'MYSQLHOST', 'db'),

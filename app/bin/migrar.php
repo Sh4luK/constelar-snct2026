@@ -68,6 +68,17 @@ function dividir_sql(string $sql): array
     return $comandos;
 }
 
+// 0. Diagnóstico: quais variáveis de banco existem (só os nomes, nunca os valores).
+$vistas = array_values(array_filter(
+    ['DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASSWORD', 'MYSQLHOST', 'MYSQLPORT', 'MYSQLUSER', 'MYSQLPASSWORD', 'MYSQLDATABASE', 'MYSQL_URL', 'DATABASE_URL'],
+    fn ($n) => (string) getenv($n) !== ''
+));
+log_migracao('Variáveis de banco recebidas: ' . ($vistas ? implode(', ', $vistas) : 'NENHUMA'));
+if (!array_intersect($vistas, ['DB_HOST', 'MYSQLHOST', 'MYSQL_URL', 'DATABASE_URL'])) {
+    log_migracao('ATENÇÃO: nenhum endereço de banco definido. No Railway, crie no serviço do site a variável '
+        . 'MYSQL_URL = ${{MySQL.MYSQL_URL}} (troque "MySQL" pelo nome do cartão do banco).');
+}
+
 // 1. Espera o banco aceitar conexões (primeira inicialização pode demorar).
 $pdo = null;
 for ($tentativa = 1; ; $tentativa++) {

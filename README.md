@@ -43,18 +43,17 @@ O projeto já vem preparado para o [Railway](https://railway.com) (`railway.json
 1. Entre em railway.com com a conta do GitHub.
 2. **New Project → Deploy from GitHub repo →** `Sh4luK/constelar-snct2026`. Se o código não estiver no branch principal, abra o serviço criado, vá em **Settings → Source** e escolha o branch do projeto.
 3. No mesmo projeto: **+ New → Database → MySQL**.
-4. No serviço do site, aba **Variables**, crie (os valores com `${{…}}` são copiados do MySQL pelo próprio Railway):
+4. No serviço do site, aba **Variables**, crie (o valor com `${{…}}` é copiado do banco pelo próprio Railway; troque `MySQL` pelo nome do cartão do banco no mapa, se for diferente):
 
    | Variável | Valor |
    |---|---|
-   | `MYSQLHOST` | `${{MySQL.MYSQLHOST}}` |
-   | `MYSQLPORT` | `${{MySQL.MYSQLPORT}}` |
-   | `MYSQLUSER` | `${{MySQL.MYSQLUSER}}` |
-   | `MYSQLPASSWORD` | `${{MySQL.MYSQLPASSWORD}}` |
-   | `MYSQLDATABASE` | `${{MySQL.MYSQLDATABASE}}` |
+   | `MYSQL_URL` | `${{MySQL.MYSQL_URL}}` |
    | `ADMIN_EMAIL` | o e-mail do administrador |
    | `ADMIN_PASSWORD` | uma senha forte (10+ caracteres) |
    | `CONFIAR_PROXY` | `1` |
+   | `PORT` | `8080` |
+
+   Também funcionam as cinco variáveis separadas (`MYSQLHOST`, `MYSQLPORT`, `MYSQLUSER`, `MYSQLPASSWORD`, `MYSQLDATABASE`). Ao subir, o log mostra quais variáveis de banco o site recebeu.
 
 5. Ainda no serviço do site: **Settings → Volumes → Add Volume**, com caminho `/var/www/dados/fotos` (guarda as fotos entre atualizações).
 6. **Settings → Networking → Generate Domain.** Se pedir uma porta, use a que o Railway sugerir (o site se ajusta à variável `PORT`).
