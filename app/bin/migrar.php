@@ -91,7 +91,7 @@ for ($tentativa = 1; ; $tentativa++) {
             exit(1);
         }
         if ($tentativa === 1 || $tentativa % 10 === 0) {
-            $alvo = (getenv('DB_HOST') ?: getenv('MYSQLHOST') ?: 'db') . ':' . (getenv('DB_PORT') ?: getenv('MYSQLPORT') ?: '3306');
+            $alvo = destino_banco();
             log_migracao("Aguardando o banco de dados em {$alvo}… ({$e->getMessage()})");
         }
         sleep(2);

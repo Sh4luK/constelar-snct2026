@@ -2,6 +2,12 @@
 declare(strict_types=1);
 
 /** Conexão única por requisição. */
+/** Endereço host:porta do banco configurado (para mensagens de log). */
+function destino_banco(): string
+{
+    return $GLOBALS['__destino_banco'] ?? '?';
+}
+
 function db(): PDO
 {
     static $pdo = null;
@@ -15,13 +21,16 @@ function db(): PDO
             'MYSQLPASSWORD' => isset($url['pass']) ? rawurldecode($url['pass']) : null,
             'MYSQLDATABASE' => isset($url['path']) ? ltrim($url['path'], '/') : null,
         ];
-        $v = fn (string $a, string $b, string $padrao = '') => (string) (getenv($a) ?: getenv($b) ?: ($daUrl[$b] ?? null) ?: $padrao);
+        // DB_* só valem como conjunto (Docker Compose, com DB_HOST). Sem DB_HOST, usa-se o banco da plataforma.
+        $usarDb = (string) getenv('DB_HOST') !== '' || ((string) getenv('MYSQLHOST') === '' && !$url);
+        $v = fn (string $a, string $b, string $padrao = '') => (string) (($usarDb ? getenv($a) : '') ?: getenv($b) ?: ($daUrl[$b] ?? null) ?: $padrao);
         $dsn = sprintf(
             'mysql:host=%s;port=%d;dbname=%s;charset=utf8mb4',
             $v('DB_HOST', 'MYSQLHOST', 'db'),
             (int) $v('DB_PORT', 'MYSQLPORT', '3306'),
             $v('DB_NAME', 'MYSQLDATABASE', 'constelar')
         );
+        $GLOBALS['__destino_banco'] = $v('DB_HOST', 'MYSQLHOST', 'db') . ':' . $v('DB_PORT', 'MYSQLPORT', '3306');
         $pdo = new PDO($dsn, $v('DB_USER', 'MYSQLUSER'), $v('DB_PASSWORD', 'MYSQLPASSWORD'), [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
